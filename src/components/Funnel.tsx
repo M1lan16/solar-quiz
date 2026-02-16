@@ -155,7 +155,7 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
                             label="Doppelhaushälfte"
                             selected={formData.buildingType === 'Doppelhaushälfte'}
                             onClick={() => handleDelayedSelection('buildingType', 'Doppelhaushälfte')}
-                            imageSrc="/Doppelhaus-hälfte.jpg"
+                            imageSrc="/Doppelhaushalfte.jpg"
                             className="!h-32 md:!h-auto !aspect-auto md:!aspect-video h-full"
                         />
                         <SelectionCard
