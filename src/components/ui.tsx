@@ -45,18 +45,18 @@ export const SelectionCard: React.FC<SelectionCardProps> = ({ label, selected, o
             whileTap={{ scale: 0.99 }}
             onClick={onClick}
             className={cn(
-                "w-full rounded-xl border text-left transition-all duration-200 flex flex-col items-center shadow-sm relative overflow-hidden",
+                "w-full rounded-xl border-2 text-left transition-all duration-200 flex flex-col items-center shadow-sm relative overflow-hidden",
                 selected
-                    ? "border-green-500 bg-green-50 ring-1 ring-green-500"
-                    : "border-gray-200 bg-white hover:border-green-300 hover:shadow-md",
-                imageSrc ? "p-0 aspect-video" : "py-4 px-3 md:p-6 justify-center gap-2",
+                    ? "border-green-600 bg-green-50 ring-2 ring-green-600/20"
+                    : "border-gray-300 bg-white hover:border-green-400 hover:shadow-md",
+                imageSrc ? "p-0 aspect-video" : "py-6 px-4 md:p-8 justify-center gap-3",
                 className
             )}
         >
             {/* Checkmark for selected state */}
             {selected && (
-                <div className="absolute top-3 right-3 bg-green-500 text-white rounded-full p-0.5 z-10">
-                    <Check size={12} strokeWidth={3} />
+                <div className="absolute top-3 right-3 bg-green-600 text-white rounded-full p-1 z-10 shadow-sm">
+                    <Check size={16} strokeWidth={4} />
                 </div>
             )}
 
@@ -69,16 +69,16 @@ export const SelectionCard: React.FC<SelectionCardProps> = ({ label, selected, o
                             className="w-full h-full object-cover"
                         />
                     </div>
-                    <div className="w-full h-1/4 flex items-center justify-center bg-white border-t border-gray-100">
-                        <span className={cn("text-sm font-bold text-center leading-tight px-2", selected ? "text-green-900" : "text-gray-700")}>
+                    <div className="w-full h-1/4 flex items-center justify-center bg-white border-t border-gray-200">
+                        <span className={cn("text-lg md:text-xl font-bold text-center leading-tight px-2", selected ? "text-green-900" : "text-gray-800")}>
                             {label}
                         </span>
                     </div>
                 </>
             ) : (
                 <>
-                    {icon && <span className={cn("text-3xl transition-colors", selected ? "text-green-600" : "text-gray-400 group-hover:text-green-500")}>{icon}</span>}
-                    <span className={cn("text-base font-semibold text-center leading-tight", selected ? "text-green-900" : "text-gray-700")}>{label}</span>
+                    {icon && <span className={cn("text-4xl transition-colors", selected ? "text-green-600" : "text-gray-500 group-hover:text-green-600")}>{icon}</span>}
+                    <span className={cn("text-xl font-bold text-center leading-tight", selected ? "text-green-900" : "text-gray-800")}>{label}</span>
                 </>
             )}
         </motion.button>
@@ -93,21 +93,21 @@ interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 export const InputField: React.FC<InputFieldProps> = ({ label, error, prefix, className, ...props }) => {
     return (
-        <div className="w-full mb-5">
-            <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">
+        <div className="w-full mb-6">
+            <label className="block text-base font-bold text-gray-800 mb-3 uppercase tracking-wider">
                 {label}
             </label>
             <div className="relative group">
                 {prefix && (
-                    <div className="absolute left-0 top-0 bottom-0 px-4 bg-gray-50 border-r border-gray-300 rounded-l-lg flex items-center text-gray-500 font-medium z-10">
+                    <div className="absolute left-0 top-0 bottom-0 px-5 bg-gray-50 border-r border-gray-400 rounded-l-lg flex items-center text-gray-600 font-bold z-10 text-lg">
                         {prefix}
                     </div>
                 )}
                 <input
                     className={cn(
-                        "w-full py-3 text-lg rounded-lg border bg-white outline-none transition-all duration-200",
-                        "border-gray-300 hover:border-green-400 focus:border-green-500 focus:ring-4 focus:ring-green-500/10",
-                        prefix ? "pl-[4.5rem] pr-4" : "px-4",
+                        "w-full py-4 text-xl rounded-lg border-2 bg-white outline-none transition-all duration-200",
+                        "border-gray-400 hover:border-green-500 focus:border-green-600 focus:ring-4 focus:ring-green-600/10",
+                        prefix ? "pl-[5.5rem] pr-4" : "px-5",
                         error
                             ? "border-red-500 focus:border-red-500 focus:ring-red-100"
                             : "",
@@ -116,7 +116,7 @@ export const InputField: React.FC<InputFieldProps> = ({ label, error, prefix, cl
                     {...props}
                 />
             </div>
-            {error && <p className="text-red-500 text-sm mt-1.5 font-medium flex items-center gap-1">• {error}</p>}
+            {error && <p className="text-red-600 text-base mt-2 font-bold flex items-center gap-1.5">• {error}</p>}
         </div>
     );
 };

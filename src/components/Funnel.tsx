@@ -1,203 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { CheckCircle, Loader2, ThumbsUp, ThumbsDown, HelpCircle, Sun, SunMoon, Scale } from 'lucide-react';
 import { ProgressBar, SelectionCard, InputField } from './ui';
 import { FunnelState, INITIAL_STATE } from '../types';
+import { trackEvent } from '../lib/analytics';
 
-const TOTAL_STEPS = 12;
+const TOTAL_STEPS = 10;
 // Placeholder n8n webhook
 const WEBHOOK_URL = 'https://n8n.placeholder.com/webhook/solar-funnel';
 
-export const Funnel = () => {
-    const [step, setStep] = useState(1);
-    const [formData, setFormData] = useState<FunnelState>(INITIAL_STATE);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isDisqualified, setIsDisqualified] = useState(false);
-
-    // Scroll to top on step change
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, [step]);
-
-    // Loading screen logic for Step 7
-    useEffect(() => {
-        if (step === 7) {
-            const timer = setTimeout(() => {
-                handleNext();
-            }, 3000);
-            return () => clearTimeout(timer);
-        }
-    }, [step]);
-
-    const updateField = (field: keyof FunnelState, value: any) => {
-        setFormData(prev => ({ ...prev, [field]: value }));
-    };
-
-    const handleNext = () => {
-        if (step < TOTAL_STEPS) {
-            setStep(prev => prev + 1);
-        } else {
-            submitData();
-        }
-    };
-
-    const handleBack = () => {
-        if (step > 1) {
-            setStep(prev => prev - 1);
-        }
-    };
-
-    // Special handler for Owner check
-    const handleOwnerSelect = (isOwner: boolean) => {
-        updateField('isOwner', isOwner);
-        if (!isOwner) {
-            setIsDisqualified(true);
-        } else {
-            handleNext();
-        }
-    };
-
-    const submitData = async () => {
-        setIsSubmitting(true);
-        try {
-            // Simulate API call
-            console.log('Sending data to n8n:', formData, 'Target:', WEBHOOK_URL);
-            await new Promise(resolve => setTimeout(resolve, 1500));
-
-            // Actual fetch would go here:
-            // await fetch(WEBHOOK_URL, { 
-            //   method: 'POST', 
-            //   headers: { 'Content-Type': 'application/json' },
-            //   body: JSON.stringify(formData) 
-            // });
-
-            setIsSuccess(true);
-        } catch (error) {
-            console.error('Submission failed', error);
-            alert('Es gab einen Fehler beim Senden. Bitte versuchen Sie es erneut.');
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
-    // Validation helper
-    const canProceed = () => {
-        switch (step) {
-            case 6: // Region Check (Nürnberg/Fürth/Erlangen only)
-                return /^\d{5}$/.test(formData.zipCode) &&
-                    (['90', '91', '92', '96'].some(p => formData.zipCode.startsWith(p)));
-            case 8:
-                return formData.firstName.length > 2 &&
-                    formData.lastName.length > 2 &&
-                    /^[a-zA-ZäöüÄÖÜß\s-]+$/.test(formData.firstName) &&
-                    /^[a-zA-ZäöüÄÖÜß\s-]+$/.test(formData.lastName) &&
-                    /^\d{5}$/.test(formData.zipCode) &&
-                    (['90', '91', '92', '96'].some(p => formData.zipCode.startsWith(p)));
-            case 9: return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
-            case 10: return formData.phone.startsWith('+49') && formData.phone.length >= 11;
-            default: return true;
-        }
-    };
-
-    if (isDisqualified) return <DisqualifiedScreen />;
-    if (isSuccess) return <SuccessScreen />;
-
-
-
-    return (
-        <div className="w-full min-h-screen bg-gray-50 flex flex-col">
-            <div className="w-full max-w-xl mx-auto px-4 pb-12 pt-8">
-
-                <div className="bg-white rounded-none md:rounded-2xl md:shadow-sm md:border md:border-gray-100 overflow-visible relative">
-
-                    {/* Content Area */}
-                    <div className="px-4 md:px-8 pb-6 md:pb-10 pt-6 md:pt-8 min-h-[400px] flex flex-col">
-                        {/* Horizontal Header: Logo + Progress */}
-                        <div className="flex items-center gap-6 mb-8">
-                            {/* Logo */}
-                            <img src="/logo1.png" alt="Solar Logo" className="h-20 w-auto object-contain flex-shrink-0" />
-
-                            {/* Progress Bar (Fills remaining space) */}
-                            <div className="flex-1">
-                                <ProgressBar
-                                    currentStep={step}
-                                    totalSteps={TOTAL_STEPS}
-                                    className="h-2 rounded-full"
-                                />
-                            </div>
-                        </div>
-                        <AnimatePresence mode="wait" initial={false}>
-                            <motion.div
-                                key={step}
-                                initial={{ opacity: 0, y: 15 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -15 }}
-                                transition={{ duration: 0.3, ease: "easeOut" }}
-                                className="w-full"
-                            >
-                                <StepContent
-                                    step={step}
-                                    formData={formData}
-                                    updateField={updateField}
-                                    handleNext={handleNext}
-                                    handleOwnerSelect={handleOwnerSelect}
-                                    canProceed={canProceed}
-                                    isSubmitting={isSubmitting}
-                                />
-
-                                {/* Bottom Back Button */}
-                                {step > 1 && (
-                                    <div className="mt-8 flex justify-center">
-                                        <button
-                                            onClick={handleBack}
-                                            className="text-sm text-slate-400 hover:text-slate-600 font-medium transition-colors hover:underline"
-                                        >
-                                            Zurück
-                                        </button>
-                                    </div>
-                                )}
-                            </motion.div>
-                        </AnimatePresence>
-                    </div>
-                </div>
-
-                {/* Trust Badges Footer */}
-                <div className="mt-12 flex justify-center gap-6 text-gray-400 grayscale opacity-80">
-                    <div className="flex items-center gap-2 text-xs font-semibold tracking-wide">
-                        <CheckCircle size={14} className="text-green-600" /> Kostenlos & Unverbindlich
-                    </div>
-                    <a
-                        href="https://solar-sed.de/impressum-datenschutz/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 text-xs font-semibold tracking-wide hover:underline hover:text-gray-600 transition-colors cursor-pointer"
-                    >
-                        <CheckCircle size={14} className="text-green-600" /> Datensicher (SSL)
-                    </a>
-                </div>
-            </div>
-        </div>
-    );
-};
-
 // --- Sub-components (Screens) ---
 
-const DisqualifiedScreen = () => (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="max-w-md bg-white p-8 rounded-2xl shadow-lg text-center">
-            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <AlertCircle className="text-red-600 w-8 h-8" />
-            </div>
-            <h2 className="text-2xl font-bold text-slate-800 mb-4">Vielen Dank für Ihr Interesse</h2>
-            <p className="text-slate-600 mb-6">
-                Leider können wir aktuell nur Hauseigentümer beraten, da die Installation einer Solaranlage
-                die Zustimmung des Eigentümers erfordert. Wir bitten um Ihr Verständnis.
-            </p>
-            <a href="/" className="text-primary font-medium hover:underline">Zurück zur Startseite</a>
-        </div>
-    </div>
-);
+// DisqualifiedScreen removed as Renters now flow to Step 99
 
 const SuccessScreen = () => (
     <div className="min-h-screen bg-white flex items-center justify-center p-4">
@@ -222,29 +36,37 @@ const SuccessScreen = () => (
                     <CheckCircle className="text-green-600 w-10 h-10" strokeWidth={3} />
                 </motion.div>
 
-                <h2 className="text-4xl font-extrabold mb-4 bg-gradient-to-r from-amber-400 to-orange-600 bg-clip-text text-transparent">
-                    Vielen Dank!
+                <h2 className="text-3xl md:text-4xl font-extrabold mb-4 bg-gradient-to-r from-amber-400 to-orange-600 bg-clip-text text-transparent leading-tight">
+                    Vielen Dank! <br />Ihre Anfrage ist eingegangen.
                 </h2>
 
-                <p className="text-slate-500 text-lg mb-8 leading-relaxed">
-                    Wir haben Ihre Angaben erhalten.
+                <p className="text-slate-600 text-lg mb-8 leading-relaxed">
+                    Wir haben Ihre Daten erhalten und prüfen diese aktuell. Einer unserer Solar-Experten wird sich in Kürze bei Ihnen melden.
                 </p>
 
+                {/* Contact Section */}
+                <div className="bg-slate-50 rounded-xl p-6 mb-8 border border-slate-100 flex flex-col gap-4">
+                    <p className="text-slate-500 text-sm font-semibold uppercase tracking-wider">Haben Sie dringende Fragen?</p>
+
+                    <a href="tel:+4991160057787" className="text-2xl font-bold text-green-700 hover:text-green-800 transition-colors">
+                        0911 600 577 87
+                    </a>
+
+                    <a href="mailto:info@solar-sed.de" className="text-lg font-medium text-slate-600 hover:text-blue-600 transition-colors">
+                        info@solar-sed.de
+                    </a>
+                </div>
+
                 <a
-                    href="https://solar-sed.de/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 group text-green-700 font-bold text-lg hover:text-green-800 transition-colors border-2 border-green-100 hover:border-green-200 px-8 py-3 rounded-full"
+                    href="https://solar-sed.de"
+                    className="w-full block bg-green-600 hover:bg-green-700 text-white font-bold text-lg py-4 rounded-full shadow-lg hover:shadow-xl transition-all"
                 >
-                    Besuchen Sie unsere Website
-                    <span className="group-hover:translate-x-1 transition-transform">→</span>
+                    Zurück zur Website
                 </a>
             </div>
         </div>
     </div>
 );
-
-// --- Main Step Switcher ---
 
 // Validation Helper
 const getValidationError = (field: keyof FunnelState, value: string): string | null => {
@@ -311,135 +133,210 @@ const getValidationError = (field: keyof FunnelState, value: string): string | n
     return null;
 };
 
-const StepContent = ({ step, formData, updateField, handleNext, handleOwnerSelect, canProceed, isSubmitting }: any) => {
+const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSelection, handleOwnerSelect, canProceed, isSubmitting, submitData, loadingPhase }: any) => {
     switch (step) {
-        case 1: // Start
-            return (
-                <div className="text-center py-4">
-                    <h1 className="text-3xl md:text-6xl font-extrabold text-gray-900 mb-4 md:mb-8 leading-tight tracking-tight">
-                        Machen Sie den <span className="bg-gradient-to-r from-amber-400 to-orange-600 bg-clip-text text-transparent font-extrabold">Solar-Check</span> für Ihr Gebäude.
-                    </h1>
-                    <p className="text-xl text-slate-500 mb-12 font-medium max-w-xl mx-auto">
-                        Erhalten Sie in 2 Minuten eine unabhängige Einschätzung Ihres Solarpotenzials. Region Nürnberg.
-                    </p>
-                    <button
-                        onClick={handleNext}
-                        className="w-full py-4 bg-green-600 hover:bg-green-700 text-white rounded-full text-xl font-bold shadow-lg hover:shadow-xl hover:scale-[1.01] transition-all"
-                    >
-                        JETZT STARTEN
-                    </button>
-                    <p className="mt-6 text-sm text-slate-400">Dauert nur 2 Minuten • Kostenlos</p>
-                </div>
-            );
 
-        case 2: // Building Type
+
+        case 1: // Building Type
             return (
                 <div>
-                    <h2 className="text-xl md:text-3xl font-bold text-gray-900 mb-4 md:mb-8 text-center leading-tight">
-                        Um was für ein Gebäude handelt es sich?
+                    <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-6 md:mb-10 text-center leading-tight">
+                        Welcher Haustyp ist es?
                     </h2>
-                    <div className="grid grid-cols-2 md:grid-cols-2 gap-3 md:gap-4">
+                    <div className="grid grid-cols-2 gap-4 md:gap-8">
                         <SelectionCard
                             label="Einfamilienhaus"
                             selected={formData.buildingType === 'Einfamilienhaus'}
-                            onClick={() => { updateField('buildingType', 'Einfamilienhaus'); handleNext(); }}
+                            onClick={() => handleDelayedSelection('buildingType', 'Einfamilienhaus')}
                             imageSrc="/Einfamilienhaus.jpg"
-                            className="!h-32 md:!h-auto !aspect-auto md:!aspect-video"
+                            className="!h-32 md:!h-auto !aspect-auto md:!aspect-video h-full"
                         />
                         <SelectionCard
                             label="Doppelhaushälfte"
                             selected={formData.buildingType === 'Doppelhaushälfte'}
-                            onClick={() => { updateField('buildingType', 'Doppelhaushälfte'); handleNext(); }}
+                            onClick={() => handleDelayedSelection('buildingType', 'Doppelhaushälfte')}
                             imageSrc="/Doppelhaus-hälfte.jpg"
-                            className="!h-32 md:!h-auto !aspect-auto md:!aspect-video"
+                            className="!h-32 md:!h-auto !aspect-auto md:!aspect-video h-full"
                         />
                         <SelectionCard
                             label="Reihenhaus"
                             selected={formData.buildingType === 'Reihenhaus'}
-                            onClick={() => { updateField('buildingType', 'Reihenhaus'); handleNext(); }}
+                            onClick={() => handleDelayedSelection('buildingType', 'Reihenhaus')}
                             imageSrc="/Reihenhaus.jpg"
-                            className="!h-32 md:!h-auto !aspect-auto md:!aspect-video"
+                            className="!h-32 md:!h-auto !aspect-auto md:!aspect-video h-full"
                         />
                         <SelectionCard
                             label="Mehrfamilienhaus"
                             selected={formData.buildingType === 'Mehrfamilienhaus'}
-                            onClick={() => { updateField('buildingType', 'Mehrfamilienhaus'); handleNext(); }}
+                            onClick={() => handleDelayedSelection('buildingType', 'Mehrfamilienhaus')}
                             imageSrc="/Mehrfamilien-haus.jpg"
-                            className="!h-32 md:!h-auto !aspect-auto md:!aspect-video"
+                            className="!h-32 md:!h-auto !aspect-auto md:!aspect-video h-full"
                         />
-                        <div className="col-span-2">
-                            <SelectionCard
-                                label="Gewerbe"
-                                selected={formData.buildingType === 'Gewerbe'}
-                                onClick={() => { updateField('buildingType', 'Gewerbe'); handleNext(); }}
-                                imageSrc="/gewerbe.jpg"
-                                className="!h-32 md:!h-auto !aspect-auto md:!aspect-video"
-                            />
-                        </div>
+                        <SelectionCard
+                            label="Gewerbe"
+                            selected={formData.buildingType === 'Gewerbe'}
+                            onClick={() => handleDelayedSelection('buildingType', 'Gewerbe')}
+                            imageSrc="/gewerbe.jpg"
+                            className="!h-32 md:!h-auto !aspect-auto md:!aspect-video h-full"
+                        />
+                        <SelectionCard
+                            label="Nicht sicher"
+                            selected={formData.buildingType === 'other'}
+                            onClick={() => handleDelayedSelection('buildingType', 'other')}
+                            imageSrc="/nichtsicher.jpg"
+                            className="!h-32 md:!h-auto !aspect-auto md:!aspect-video h-full"
+                        />
                     </div>
                 </div>
             );
 
-        case 3: // Persons
+        case 2: // Persons
             return (
                 <div>
-                    <h2 className="text-xl md:text-3xl font-bold text-gray-900 mb-4 md:mb-8 text-center leading-tight">
+                    <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-6 md:mb-10 text-center leading-tight">
                         Wie viele Personen leben in Ihrem Haushalt?
                     </h2>
-                    <div className="flex flex-col md:grid md:grid-cols-3 gap-3 md:gap-4">
-                        {['1-2', '3-4', '5+'].map((opt) => (
-                            <SelectionCard
-                                key={opt}
-                                label={opt}
-                                selected={formData.householdSize === opt}
-                                onClick={() => { updateField('householdSize', opt); handleNext(); }}
-                            />
-                        ))}
+                    <div className="grid grid-cols-2 gap-4 md:gap-8 max-w-2xl mx-auto">
+                        <SelectionCard
+                            label="1 bis 2"
+                            selected={formData.householdSize === '1-2'}
+                            onClick={() => handleDelayedSelection('householdSize', '1-2')}
+                            imageSrc="/1-2.jpg"
+                            className="!aspect-square h-full"
+                        />
+                        <SelectionCard
+                            label="3 bis 4"
+                            selected={formData.householdSize === '3-4'}
+                            onClick={() => handleDelayedSelection('householdSize', '3-4')}
+                            imageSrc="/3.jpg"
+                            className="!aspect-square h-full"
+                        />
+                        <SelectionCard
+                            label="5 oder mehr"
+                            selected={formData.householdSize === '5+'}
+                            onClick={() => handleDelayedSelection('householdSize', '5+')}
+                            imageSrc="/5.jpg"
+                            className="!aspect-square h-full"
+                        />
+                        <SelectionCard
+                            label="Weiß ich nicht"
+                            selected={formData.householdSize === 'unsure'}
+                            onClick={() => handleDelayedSelection('householdSize', 'unsure')}
+                            icon={<HelpCircle className="w-12 h-12 text-gray-400 group-hover:text-green-500 transition-colors" />}
+                            className="!aspect-square h-full flex flex-col items-center justify-center bg-gray-50 border-dashed"
+                        />
                     </div>
                 </div>
             );
 
-        case 4: // Consumption
+        case 3: // Usage Time
             return (
                 <div>
-                    <h2 className="text-xl md:text-3xl font-bold text-gray-900 mb-4 md:mb-8 text-center leading-tight">
-                        Wie hoch ist Ihr jährlicher Stromverbrauch?
+                    <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-6 md:mb-10 text-center leading-tight">
+                        Wann verbrauchen Sie den meisten Strom?
                     </h2>
-                    <div className="flex flex-col md:grid md:grid-cols-2 gap-3 md:gap-4">
-                        {['< 2500 kWh', '2500-4000 kWh', '4000-6000 kWh', '> 6000 kWh'].map((opt) => (
-                            <SelectionCard
-                                key={opt}
-                                label={opt}
-                                selected={formData.yearlyConsumption === opt}
-                                onClick={() => { updateField('yearlyConsumption', opt); handleNext(); }}
-                            />
-                        ))}
+                    <div className="grid grid-cols-2 gap-4 md:gap-8">
+                        <SelectionCard
+                            label="Morgens & Abends"
+                            selected={formData.usageTime === 'morgens_abends'}
+                            onClick={() => handleDelayedSelection('usageTime', 'morgens_abends')}
+                            icon={<SunMoon className="w-12 h-12 text-gray-700" strokeWidth={1.5} />}
+                            className="h-full"
+                        />
+                        <SelectionCard
+                            label="Tagsüber"
+                            selected={formData.usageTime === 'tagsueber'}
+                            onClick={() => handleDelayedSelection('usageTime', 'tagsueber')}
+                            icon={<Sun className="w-12 h-12 text-gray-700" strokeWidth={1.5} />}
+                            className="h-full"
+                        />
+                        <SelectionCard
+                            label="Gleichmäßig"
+                            selected={formData.usageTime === 'gleichmaessig'}
+                            onClick={() => handleDelayedSelection('usageTime', 'gleichmaessig')}
+                            icon={<Scale className="w-12 h-12 text-gray-700" strokeWidth={1.5} />}
+                            className="h-full"
+                        />
+                        <SelectionCard
+                            label="Weiß ich nicht"
+                            selected={formData.usageTime === 'unsure'}
+                            onClick={() => handleDelayedSelection('usageTime', 'unsure')}
+                            icon={<HelpCircle className="w-12 h-12 text-gray-400 group-hover:text-green-500 transition-colors" strokeWidth={1.5} />}
+                            className="bg-gray-50 border-dashed h-full"
+                        />
                     </div>
                 </div>
             );
 
-        case 5: // Owner (Critical)
+
+        case 4: // Owner
             return (
                 <div>
-                    <h2 className="text-xl md:text-3xl font-bold text-gray-900 mb-4 md:mb-8 text-center leading-tight">
+                    <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-6 md:mb-10 text-center leading-tight">
                         Sind Sie Eigentümer des genannten Gebäudes?
                     </h2>
-                    <div className="flex flex-col md:grid md:grid-cols-2 gap-3 md:gap-4">
+                    <div className="grid grid-cols-2 gap-4 md:gap-8">
                         <SelectionCard
-                            label="Ja, ich bin Eigentümer"
+                            label="Ja, Eigentümer"
                             selected={formData.isOwner === true}
+                            // Directly call handleOwnerSelect, which now handles delay and navigation
                             onClick={() => handleOwnerSelect(true)}
+                            icon={<ThumbsUp className="w-8 h-8 md:w-10 md:h-10 text-green-600" />}
+                            className="h-full"
                         />
                         <SelectionCard
-                            label="Nein, ich bin Mieter"
+                            label="Nein, Mieter"
                             selected={formData.isOwner === false}
                             onClick={() => handleOwnerSelect(false)}
+                            icon={<ThumbsDown className="w-8 h-8 md:w-10 md:h-10 text-red-400" />}
+                            className="h-full"
                         />
                     </div>
                 </div>
             );
 
-        case 6: // ZIP
+        case 99: // Renter Capture
+            return (
+                <div className="text-center py-12 md:py-20">
+                    <CheckCircle className="w-24 h-24 text-green-500 mx-auto mb-10 animate-in fade-in zoom-in duration-700" />
+                    <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight">
+                        Vielen Dank!
+                    </h2>
+                    <p className="text-lg md:text-2xl text-gray-600 mb-12 max-w-md mx-auto">
+                        Auch für Mieter gibt es Lösungen! Wir haben Ihre Informationen erhalten.
+                    </p>
+                    <p className="text-gray-600 mb-6 text-center">
+                        Hinterlassen Sie Ihre Kontaktdaten für eine unverbindliche Beratung zu Balkonkraftwerken.
+                    </p>
+                    <div className="flex flex-col gap-4">
+                        <InputField
+                            label="Name"
+                            value={formData.lastName}
+                            onChange={(e) => updateField('lastName', e.target.value)}
+                            placeholder="Ihr Name"
+                        />
+                        <InputField
+                            label="Telefonnummer"
+                            type="tel"
+                            prefix="+49"
+                            value={formData.phone}
+                            onChange={(e) => updateField('phone', e.target.value)}
+                            placeholder="170 12345678"
+                        />
+                    </div>
+                    <button
+                        onClick={submitData}
+                        className="w-full mt-6 py-4 bg-green-600 hover:bg-green-700 text-white rounded-full font-bold text-xl transition-all shadow-lg"
+                    >
+                        Rückruf anfordern
+                    </button>
+                    <p className="text-center text-xs text-gray-400 mt-4">
+                        Ihre Daten werden streng vertraulich behandelt (DSGVO-konform).
+                    </p>
+                </div>
+            );
+
+        case 5: // ZIP
             const isZipLengthValid = /^\d{5}$/.test(formData.zipCode);
             const isRegionValid = ['90', '91', '92', '96'].some(p => formData.zipCode.startsWith(p));
 
@@ -451,9 +348,9 @@ const StepContent = ({ step, formData, updateField, handleNext, handleOwnerSelec
             }
 
             return (
-                <div>
-                    <h2 className="text-xl md:text-3xl font-bold text-gray-900 mb-4 md:mb-8 text-center leading-tight">
-                        Wo soll die Anlage installiert werden?
+                <div className="max-w-md mx-auto text-center">
+                    <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-6 md:mb-10 text-center leading-tight">
+                        Wie lautet Ihre Postleitzahl?
                     </h2>
                     <InputField
                         label="Postleitzahl"
@@ -468,43 +365,61 @@ const StepContent = ({ step, formData, updateField, handleNext, handleOwnerSelec
                     <button
                         disabled={!canProceed() || !!zipError}
                         onClick={handleNext}
-                        className="w-full mt-6 py-4 bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-green-700 text-white rounded-full font-bold text-xl transition-all shadow-lg"
+                        className="w-full mt-8 py-5 bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-green-700 text-white rounded-full font-bold text-2xl transition-all shadow-lg h-16 md:h-20 flex items-center justify-center"
                     >
                         Weiter
                     </button>
+                    <p className="text-center text-xs text-gray-400 mt-4">
+                        Ihre Daten werden streng vertraulich behandelt (DSGVO-konform).
+                    </p>
                 </div>
             );
 
-        case 7: // Loading
+        case 6: // Loading
             return (
-                <div className="flex flex-col items-center justify-center py-12 text-center">
-                    <Loader2 className="w-16 h-16 text-primary animate-spin mb-6" />
-                    <h3 className="text-xl font-semibold text-slate-800">Ihre Daten werden analysiert...</h3>
-                    <p className="text-slate-500 mt-2">Wir suchen den besten Experten in Ihrer Region.</p>
+                <div className="flex flex-col items-center justify-center py-12 md:py-20 text-center max-w-xl mx-auto">
+                    {loadingPhase === 'spinner' ? (
+                        <Loader2 className="w-20 h-20 text-primary animate-spin mb-8 text-green-600" />
+                    ) : (
+                        <CheckCircle className="w-24 h-24 text-green-500 mb-8 animate-in fade-in zoom-in duration-700" />
+                    )}
+                    <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4 leading-tight">
+                        Wir prüfen Ihre regionale Verfügbarkeit
+                    </h3>
+                    <p className="text-lg text-gray-600 mb-8 leading-relaxed max-w-md mx-auto">
+                        Einen Moment bitte – wir analysieren Ihre Angaben und berechnen Ihr individuelles Solarpotenzial.
+                    </p>
+                    <div className="flex flex-col gap-3 text-left max-w-xs mx-auto bg-green-50/50 p-6 rounded-xl border border-green-100">
+                        <div className="flex items-center gap-3">
+                            <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
+                            <span className="text-gray-800 font-medium">Kostenlos & unverbindlich</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
+                            <span className="text-gray-800 font-medium">Planung durch zertifizierte Experten</span>
+                        </div>
+                    </div>
                 </div>
             );
 
-        case 8: // Name & PLZ
+        case 7: // Name (Strictly Name Only)
             const firstNameError = getValidationError('firstName', formData.firstName);
             const lastNameError = getValidationError('lastName', formData.lastName);
 
-            const isZipLengthValidMerged = /^\d{5}$/.test(formData.zipCode);
-            const isRegionValidMerged = ['90', '91', '92', '96'].some(p => formData.zipCode.startsWith(p));
-
-            let zipErrorMerged;
-            if (formData.zipCode && !isZipLengthValidMerged) {
-                zipErrorMerged = "Bitte geben Sie eine gültige PLZ ein (5 Ziffern).";
-            } else if (formData.zipCode && isZipLengthValidMerged && !isRegionValidMerged) {
-                zipErrorMerged = "Derzeit sind wir nur in den Regionen 90, 91, 92 und 96 tätig.";
-            }
-
-            const hasStepError = !!firstNameError || !!lastNameError || !!zipErrorMerged;
+            // We still need to ensure ZIP is valid from previous step, but we don't ask it here.
+            // The canProceed check for Step 8 should theoretically handle it, but let's just check names here for the UI error.
 
             return (
                 <div>
-                    <h2 className="text-xl md:text-3xl font-bold text-gray-900 mb-4 md:mb-8 text-center leading-tight">
-                        Wie dürfen wir Sie ansprechen?
+                    <div className="flex justify-center mb-6">
+                        <CheckCircle className="w-16 h-16 text-green-500 animate-in fade-in zoom-in duration-500" />
+                    </div>
+                    <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-3 text-center leading-tight">
+                        Klasse! Wir sind in {formData.zipCode || 'Ihrer Region'} verfügbar.
                     </h2>
+                    <p className="text-lg md:text-xl text-gray-600 mb-8 md:mb-12 text-center">
+                        Wie dürfen wir Sie ansprechen?
+                    </p>
                     <div className="grid grid-cols-2 gap-6 mb-6">
                         <InputField
                             label="Vorname"
@@ -521,33 +436,31 @@ const StepContent = ({ step, formData, updateField, handleNext, handleOwnerSelec
                             error={lastNameError || undefined}
                         />
                     </div>
-                    <InputField
-                        label="Postleitzahl"
-                        value={formData.zipCode}
-                        onChange={(e) => updateField('zipCode', e.target.value)}
-                        placeholder="90403"
-                        type="tel"
-                        maxLength={5}
-                        error={zipErrorMerged}
-                    />
+                    {/* PLZ Input Removed - Handled in Step 6 */}
                     <button
-                        disabled={!canProceed() || hasStepError}
+                        disabled={!canProceed() || !!firstNameError || !!lastNameError}
                         onClick={handleNext}
-                        className="w-full mt-6 py-4 bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-green-700 text-white rounded-full font-bold text-xl transition-all shadow-lg"
+                        className="w-full mt-8 py-5 bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-green-700 text-white rounded-full font-bold text-2xl transition-all shadow-lg h-16 md:h-20 flex items-center justify-center"
                     >
                         Weiter
                     </button>
+                    <p className="text-center text-xs text-gray-400 mt-4">
+                        Ihre Daten werden streng vertraulich behandelt (DSGVO-konform).
+                    </p>
                 </div>
             );
 
-        case 9: // Email
+        case 8: // Email Only
             const emailError = getValidationError('email', formData.email);
 
             return (
-                <div>
-                    <h2 className="text-xl md:text-3xl font-bold text-gray-900 mb-4 md:mb-8 text-center leading-tight">
-                        Ihre E-Mail Adresse für das Angebot?
+                <div className="max-w-md mx-auto">
+                    <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-2 text-center leading-tight">
+                        Wohin dürfen wir Ihr individuelles Angebot senden?
                     </h2>
+                    <p className="text-lg md:text-xl text-gray-600 mb-8 md:mb-12 text-center">
+                        Bitte geben Sie Ihre E-Mail-Adresse ein.
+                    </p>
                     <InputField
                         label="E-Mail"
                         type="email"
@@ -556,17 +469,64 @@ const StepContent = ({ step, formData, updateField, handleNext, handleOwnerSelec
                         placeholder="max@beispiel.de"
                         error={emailError || undefined}
                     />
+                    <p className="text-sm text-gray-500 mt-2 mb-6 flex items-center gap-1.5">
+                        <CheckCircle className="w-4 h-4 text-green-600" />
+                        Ihre E-Mail verwenden wir ausschließlich zur Zusendung Ihres Angebots. Kein Spam.
+                    </p>
                     <button
                         disabled={!canProceed() || !!emailError}
                         onClick={handleNext}
-                        className="w-full mt-6 py-4 bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-green-700 text-white rounded-full font-bold text-xl transition-all shadow-lg"
+                        className="w-full mt-8 py-5 bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-green-700 text-white rounded-full font-bold text-2xl transition-all shadow-lg h-16 md:h-20 flex items-center justify-center placeholder:text-gray-400"
                     >
                         Weiter
                     </button>
+                    <p className="text-center text-xs text-gray-400 mt-4">
+                        Ihre Daten werden streng vertraulich behandelt (DSGVO-konform).
+                    </p>
                 </div>
             );
 
-        case 10: // Phone
+        case 9: // Contact Preference (New)
+            return (
+                <div className="max-w-md mx-auto">
+                    <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-2 text-center leading-tight">
+                        Wie sollen wir Sie am besten kontaktieren?
+                    </h2>
+                    <p className="text-lg md:text-xl text-gray-600 mb-8 md:mb-12 text-center">
+                        Wählen Sie Ihren bevorzugten Kanal.
+                    </p>
+                    <div className="grid grid-cols-2 gap-4 md:gap-8">
+                        <SelectionCard
+                            label="Per WhatsApp"
+                            selected={formData.contactPreference === 'WhatsApp'}
+                            onClick={() => handleDelayedSelection('contactPreference', 'WhatsApp')}
+                            icon={
+                                <img
+                                    src="/icons8-whatsapp-240.png"
+                                    alt="WhatsApp"
+                                    className="w-16 h-16 object-contain mb-4"
+                                />
+                            }
+                            className="flex flex-col items-center justify-center py-8"
+                        />
+                        <SelectionCard
+                            label="Per Anruf"
+                            selected={formData.contactPreference === 'Anruf'}
+                            onClick={() => handleDelayedSelection('contactPreference', 'Anruf')}
+                            icon={
+                                <img
+                                    src="/icons8-phone-call-100.png"
+                                    alt="Anruf"
+                                    className="w-12 h-12 object-contain mb-4"
+                                />
+                            }
+                            className="flex flex-col items-center justify-center py-8"
+                        />
+                    </div>
+                </div>
+            );
+
+        case 10: // Phone Only (Final Step)
             const phoneError = getValidationError('phone', formData.phone);
 
             // Helper to handle input change: strip 0, prepend +49
@@ -579,88 +539,38 @@ const StepContent = ({ step, formData, updateField, handleNext, handleOwnerSelec
             };
 
             // Display value: remove +49 for the input field
-            const displayValue = formData.phone.startsWith('+49') ? formData.phone.substring(3) : formData.phone;
+            const phoneDisplayValue = formData.phone.startsWith('+49') ? formData.phone.substring(3) : formData.phone;
 
             return (
-                <div>
-                    <h2 className="text-xl md:text-3xl font-bold text-gray-900 mb-4 md:mb-8 text-center leading-tight">
-                        Unter welcher Nummer sind Sie für Rückfragen erreichbar?
+                <div className="max-w-md mx-auto">
+                    <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-2 text-center leading-tight">
+                        Geschafft! Zuletzt Ihre Handynummer:
                     </h2>
+                    <p className="text-lg md:text-xl text-gray-600 mb-8 md:mb-12 text-center">
+                        Wir rufen Sie kurz zur Klärung der Details an.
+                    </p>
                     <InputField
                         label="Mobilfunknummer / Festnetz"
                         type="tel"
                         prefix="+49"
-                        value={displayValue}
+                        value={phoneDisplayValue}
                         onChange={handlePhoneChange}
                         placeholder="170 12345678"
                         error={phoneError || undefined}
                     />
                     <button
-                        disabled={!canProceed() || !!phoneError}
+                        disabled={!canProceed() || !!phoneError || isSubmitting}
                         onClick={handleNext}
-                        className="w-full mt-6 py-4 bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-green-700 text-white rounded-full font-bold text-xl transition-all shadow-lg"
+                        className="w-full mt-8 py-5 bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-green-700 text-white rounded-full font-bold text-2xl transition-all shadow-lg h-16 md:h-20 flex items-center justify-center placeholder:text-gray-400"
                     >
-                        Weiter
+                        {isSubmitting ? (
+                            <><Loader2 className="animate-spin mr-3" /> Angebot wird erstellt...</>
+                        ) : (
+                            'Kostenlos anfragen'
+                        )}
                     </button>
-                </div>
-            );
-
-        case 11: // Contact Pref
-            return (
-                <div>
-                    <h2 className="text-xl md:text-3xl font-bold text-slate-900 mb-4 md:mb-8 leading-tight text-center">
-                        Wie möchten Sie am liebsten kontaktiert werden?
-                    </h2>
-                    <div className="grid grid-cols-2 gap-4 max-w-sm mx-auto">
-                        {[
-                            { id: 'Anruf', label: 'Anruf', icon: '/icons8-phone-call-100.png' },
-                            { id: 'WhatsApp', label: 'WhatsApp', icon: '/icons8-whatsapp-240.png' }
-                        ].map((opt) => (
-                            <SelectionCard
-                                key={opt.id}
-                                label={opt.label}
-                                selected={formData.contactPreference === opt.id}
-                                onClick={() => { updateField('contactPreference', opt.id); handleNext(); }}
-                                icon={
-                                    <img
-                                        src={opt.icon}
-                                        alt={opt.label}
-                                        className="h-14 w-auto object-contain"
-                                    />
-                                }
-                                className="aspect-auto py-5 flex flex-col justify-center items-center"
-                            />
-                        ))}
-                    </div>
-                </div>
-            );
-
-        case 12: // Timing & Submit
-            return (
-                <div>
-                    <h2 className="text-xl md:text-3xl font-bold text-gray-900 mb-4 md:mb-8 text-center leading-tight">
-                        Wann soll das Projekt realisiert werden?
-                    </h2>
-                    <div className="flex flex-col gap-3 mb-8 max-w-md mx-auto">
-                        {['So schnell wie möglich', 'In 1-3 Monaten', 'Ich informiere mich nur'].map((opt) => (
-                            <SelectionCard
-                                key={opt}
-                                label={opt}
-                                selected={formData.projectTiming === opt}
-                                onClick={() => updateField('projectTiming', opt)}
-                                className="!aspect-auto !py-4 !min-h-0"
-                            />
-                        ))}
-                    </div>
-                    <button
-                        disabled={!formData.projectTiming || isSubmitting}
-                        onClick={handleNext}
-                        className="w-full py-4 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white rounded-full text-xl font-bold shadow-2xl transition-all flex items-center justify-center gap-2"
-                    >
-                        {isSubmitting ? <Loader2 className="animate-spin" /> : 'KOSTENLOS ANFRAGEN'}
-                    </button>
-                    <p className="text-center text-gray-400 mt-4 text-sm">
-                        Unverbindlich & <a href="https://solar-sed.de/impressum-datenschutz/" target="_blank" rel="noopener noreferrer" className="hover:underline hover:text-gray-600 transition-colors cursor-pointer">Datensicher</a>
+                    <p className="text-center text-xs text-gray-400 mt-4">
+                        Ihre Daten werden streng vertraulich behandelt (DSGVO-konform).
                     </p>
                 </div>
             );
@@ -668,4 +578,226 @@ const StepContent = ({ step, formData, updateField, handleNext, handleOwnerSelec
         default:
             return null;
     }
+};
+
+export const Funnel = () => {
+    const [step, setStep] = useState(1);
+    const [formData, setFormData] = useState<FunnelState>(INITIAL_STATE);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isSuccess, setIsSuccess] = useState(false);
+    const [loadingPhase, setLoadingPhase] = useState<'spinner' | 'success'>('spinner');
+
+    // Determine scroll behavior and track step view
+    useEffect(() => {
+        window.scrollTo(0, 0);
+        trackEvent('StepView', { step });
+    }, [step]);
+
+    // Loading screen logic for Step 6
+    useEffect(() => {
+        if (step === 6) {
+            setLoadingPhase('spinner');
+            const phaseTimer = setTimeout(() => {
+                setLoadingPhase('success');
+            }, 2500); // Extended from 1500 to 2500
+
+            const nextStepTimer = setTimeout(() => {
+                handleNext();
+            }, 4000); // Extended from 3000 to 4000
+
+            return () => {
+                clearTimeout(phaseTimer);
+                clearTimeout(nextStepTimer);
+            };
+        }
+    }, [step]);
+
+    const updateField = (field: keyof FunnelState, value: any) => {
+        setFormData(prev => ({ ...prev, [field]: value }));
+    };
+
+    const handleNext = () => {
+        if (step < TOTAL_STEPS) {
+            setStep(prev => prev + 1);
+        } else {
+            submitData();
+        }
+    };
+
+    const handleBack = () => {
+        if (step > 1) {
+            setStep(prev => prev - 1);
+        }
+    };
+
+    // Special handler for Owner check with delay
+    const handleOwnerSelect = (val: boolean) => {
+        if (val === true) {
+            trackEvent('Qualified_Lead_Owner');
+        } else {
+            trackEvent('Unqualified_Renter');
+        }
+
+        setTimeout(() => {
+            updateField('isOwner', val);
+            if (val === false) {
+                // Renter -> Lead Capture
+                setStep(99);
+            } else {
+                // Owner or Unsure -> Next
+                if (step < TOTAL_STEPS) {
+                    setStep(prev => prev + 1);
+                }
+            }
+        }, 600);
+    };
+
+    const handleDelayedSelection = (field: keyof FunnelState, value: any) => {
+        // 1. Immediate visual update
+        updateField(field, value);
+
+        // 2. Delayed navigation
+        setTimeout(() => {
+            handleNext();
+        }, 600);
+    };
+
+
+
+    const submitData = async () => {
+        setIsSubmitting(true);
+        try {
+            console.log('Sending data to n8n:', formData, 'Target:', WEBHOOK_URL);
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            trackEvent('Lead_Complete');
+            setIsSuccess(true);
+        } catch (error) {
+            console.error('Submission failed', error);
+            alert('Es gab einen Fehler beim Senden. Bitte versuchen Sie es erneut.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const canProceed = () => {
+        switch (step) {
+            case 5: // ZIP
+                return /^\d{5}$/.test(formData.zipCode) &&
+                    (['90', '91', '92', '96'].some(p => formData.zipCode.startsWith(p)));
+            case 7: // Name
+                // Name Validation: Letters only
+                const nameRegex = /^[a-zA-ZäöüÄÖÜß\s\-]+$/;
+                return formData.firstName.length > 2 &&
+                    formData.lastName.length > 2 &&
+                    nameRegex.test(formData.firstName) &&
+                    nameRegex.test(formData.lastName);
+            case 8: // Email
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
+            case 9: // Contact Preference
+                return formData.contactPreference !== null;
+            case 10: // Phone
+                return formData.phone.startsWith('+49') && formData.phone.length >= 11;
+            case 99: // Renter submit
+                return formData.lastName.length > 2 && formData.phone.startsWith('+49') && formData.phone.length >= 11;
+            default: return true;
+        }
+    };
+
+    if (isSuccess) return <SuccessScreen />;
+
+    return (
+        <div className="w-full min-h-screen bg-gray-50 flex flex-col">
+            <div className="w-full max-w-xl mx-auto px-4 pb-12 pt-8">
+
+                <div className="bg-white rounded-none md:rounded-2xl md:shadow-sm md:border md:border-gray-100 overflow-visible relative">
+
+                    {/* Content Area */}
+                    <div className="px-4 md:px-8 pb-6 md:pb-10 pt-6 md:pt-8 min-h-[400px] flex flex-col">
+                        {/* Horizontal Header: Logo + Progress */}
+                        <div className="flex items-center gap-6 mb-8">
+                            {/* Logo */}
+                            <img src="/logo1.png" alt="Solar Logo" className="h-20 w-auto object-contain flex-shrink-0" />
+
+                            {/* Progress Bar (Fills remaining space) */}
+                            <div className="flex-1">
+                                {step !== 99 && (
+                                    <div className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2 text-right">
+                                        Schritt {step} von {TOTAL_STEPS}
+                                    </div>
+                                )}
+                                <ProgressBar
+                                    currentStep={step === 99 ? 4 : step}
+                                    totalSteps={TOTAL_STEPS}
+                                    className="h-2 rounded-full"
+                                />
+                            </div>
+                        </div>
+                        <AnimatePresence mode="wait" initial={false}>
+                            <motion.div
+                                key={step}
+                                initial={{ opacity: 0, y: 15 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -15 }}
+                                transition={{ duration: 0.3, ease: "easeOut" }}
+                                className="w-full"
+                            >
+                                <StepContent
+                                    step={step}
+                                    formData={formData}
+                                    updateField={updateField}
+                                    handleNext={handleNext}
+                                    handleDelayedSelection={handleDelayedSelection}
+                                    handleOwnerSelect={handleOwnerSelect}
+                                    canProceed={canProceed}
+                                    isSubmitting={isSubmitting}
+                                    submitData={submitData}
+                                    loadingPhase={loadingPhase}
+                                />
+
+                                {/* Bottom Back Button */}
+                                {step > 1 && (
+                                    <div className="mt-12 flex justify-center">
+                                        <button
+                                            onClick={handleBack}
+                                            className="text-lg text-slate-400 hover:text-slate-600 font-bold transition-colors hover:underline py-2"
+                                        >
+                                            Zurück
+                                        </button>
+                                    </div>
+                                )}
+                            </motion.div>
+                        </AnimatePresence>
+                    </div>
+                </div>
+
+                {/* Trust Badges Footer */}
+                {/* Trust Badges & Legal Footer */}
+                <div className="mt-12 flex flex-col items-center gap-4 text-gray-400 grayscale opacity-80">
+                    <div className="flex items-center gap-2 text-xs font-semibold tracking-wide">
+                        <CheckCircle size={14} className="text-green-600" /> Kostenlos & Unverbindlich
+                        <span className="mx-2">•</span>
+                        <CheckCircle size={14} className="text-green-600" /> Datensicher (SSL)
+                    </div>
+                    <div className="flex gap-6 text-[10px] uppercase tracking-widest font-medium">
+                        <a
+                            href="https://solar-sed.de/impressum-datenschutz/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hover:text-gray-600 transition-colors"
+                        >
+                            Impressum
+                        </a>
+                        <a
+                            href="https://solar-sed.de/impressum-datenschutz/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hover:text-gray-600 transition-colors"
+                        >
+                            Datenschutz
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
 };

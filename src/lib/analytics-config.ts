@@ -1,0 +1,5 @@
+export const ANALYTICS_CONFIG = {
+    GTM_ID: 'GTM-TRC5XFRL',
+    FB_PIXEL_ID: '922261250460756',
+    CLARITY_ID: 'vict1k9iq4',
+};
