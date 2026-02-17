@@ -667,8 +667,18 @@ export const Funnel = () => {
     const submitData = async () => {
         setIsSubmitting(true);
         try {
-            console.log('Sending data to n8n:', formData, 'Target:', WEBHOOK_URL);
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            const response = await fetch(WEBHOOK_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
             trackEvent('Lead_Complete');
             setIsSuccess(true);
         } catch (error) {
