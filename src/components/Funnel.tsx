@@ -7,7 +7,7 @@ import { trackEvent } from '../lib/analytics';
 
 const TOTAL_STEPS = 10;
 // Placeholder n8n webhook
-const WEBHOOK_URL = 'https://n8n.placeholder.com/webhook/solar-funnel';
+const WEBHOOK_URL = 'https://sedsolar.app.n8n.cloud/webhook-test/f338b67d-1087-4828-8a1f-fb84a790fd0c';
 
 // --- Sub-components (Screens) ---
 
