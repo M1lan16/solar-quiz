@@ -154,16 +154,11 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
                         </div>
 
                         {/* 3. Action Text */}
-                        <p className="text-xl md:text-2xl font-bold text-slate-800 mb-3">
+                        <p className="text-xl md:text-2xl font-bold text-slate-800 mb-8">
                             <span className="text-green-600">JETZT prüfen:</span> Lohnt sich eine Solaranlage für Ihr Haus in Nürnberg?
                         </p>
 
-                        {/* 4. Description */}
-                        <p className="text-base md:text-lg text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
-                            Beantworten Sie 10 kurze Fragen (ca. 2 Minuten). Anschließend erhalten Sie eine persönliche Beratung durch unser eigenes Expertenteam.
-                        </p>
-
-                        {/* 5. Premium Bullet Points */}
+                        {/* 4. Premium Bullet Points */}
                         <div className="flex flex-col gap-3 mb-10 mx-auto max-w-md text-left">
                             <div className="flex items-center gap-4 p-3.5 bg-white border border-green-200 rounded-xl shadow-sm hover:border-green-400 hover:shadow-md transition-all">
                                 <div className="flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-full bg-green-500 text-white font-bold text-sm">✓</div>
