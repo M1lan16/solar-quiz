@@ -140,10 +140,10 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
         case 1: // Building Type
             return (
                 <div>
-                    <h2 className="text-2xl md:text-4xl font-extrabold text-slate-800 text-center mb-3 leading-tight">
+                    <h2 className="text-2xl md:text-3xl font-extrabold text-slate-800 text-center mb-4 max-w-lg mx-auto leading-tight">
                         Ihr regionaler Solar-Fachbetrieb. Keine Vermittler.
                     </h2>
-                    <p className="text-lg md:text-xl text-gray-600 text-center font-medium mb-8">
+                    <p className="text-lg text-gray-600 text-center font-medium mb-10 max-w-md mx-auto">
                         In nur 2 Minuten zum Angebot. Welcher Haustyp ist es?
                     </p>
                     <div className="grid grid-cols-2 gap-4 md:gap-8">
