@@ -140,37 +140,47 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
         case 1: // Building Type
             return (
                 <div>
-                    <div className="text-center max-w-3xl mx-auto mb-6">
+                    <div className="text-center max-w-4xl mx-auto mb-8">
                         {/* 1. Main Heading */}
-                        <h2 className="text-2xl md:text-3xl font-extrabold text-slate-800 mb-2 leading-tight">
+                        <h2 className="text-2xl md:text-4xl font-extrabold text-slate-900 mb-4 leading-tight tracking-tight">
                             SED Solar – Ihr regionaler Fachbetrieb aus Nürnberg
                         </h2>
 
-                        {/* 2. Trust Rating */}
-                        <div className="flex items-center justify-center gap-1 text-yellow-500 font-bold mb-4">
-                            <span className="text-lg">⭐ 4,9 von 5 Sternen</span>
-                            <span className="text-gray-500 text-sm font-normal lowercase">(96+ Bewertungen)</span>
+                        {/* 2. Trust Rating (Pill design) */}
+                        <div className="inline-flex items-center justify-center gap-2 bg-yellow-50 border border-yellow-200 rounded-full px-4 py-1.5 mb-8 shadow-sm">
+                            <span className="text-yellow-500 text-lg">⭐⭐⭐⭐⭐</span>
+                            <span className="text-yellow-800 font-bold">4,9 von 5</span>
+                            <span className="text-gray-600 text-sm font-medium">(96+ Bewertungen)</span>
                         </div>
 
                         {/* 3. Action Text */}
-                        <p className="text-lg md:text-xl font-bold text-slate-700 mb-2">
-                            JETZT prüfen: Lohnt sich eine Solaranlage für Ihr Haus in Nürnberg?
+                        <p className="text-xl md:text-2xl font-bold text-slate-800 mb-3">
+                            <span className="text-green-600">JETZT prüfen:</span> Lohnt sich eine Solaranlage für Ihr Haus in Nürnberg?
                         </p>
 
                         {/* 4. Description */}
-                        <p className="text-sm md:text-base text-gray-600 mb-4 max-w-2xl mx-auto">
+                        <p className="text-base md:text-lg text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
                             Beantworten Sie 10 kurze Fragen (ca. 2 Minuten). Anschließend erhalten Sie eine persönliche Beratung durch unser eigenes Expertenteam.
                         </p>
 
-                        {/* 5. USPs (Bullet points) */}
-                        <div className="flex flex-col md:flex-row justify-center items-center gap-2 md:gap-6 text-sm text-green-700 font-semibold mb-8 bg-green-50 py-3 px-4 rounded-lg">
-                            <span className="flex items-center gap-1">✔ Kostenlos & unverbindlich</span>
-                            <span className="flex items-center gap-1">✔ Persönlicher Ansprechpartner vor Ort</span>
-                            <span className="flex items-center gap-1">✔ Eigene Planung & Installation</span>
+                        {/* 5. Premium Bullet Points */}
+                        <div className="flex flex-col gap-3 mb-10 mx-auto max-w-md text-left">
+                            <div className="flex items-center gap-4 p-3.5 bg-white border border-green-200 rounded-xl shadow-sm hover:border-green-400 hover:shadow-md transition-all">
+                                <div className="flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-full bg-green-500 text-white font-bold text-sm">✓</div>
+                                <span className="text-base md:text-lg font-semibold text-slate-700">Kostenlos & unverbindlich</span>
+                            </div>
+                            <div className="flex items-center gap-4 p-3.5 bg-white border border-green-200 rounded-xl shadow-sm hover:border-green-400 hover:shadow-md transition-all">
+                                <div className="flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-full bg-green-500 text-white font-bold text-sm">✓</div>
+                                <span className="text-base md:text-lg font-semibold text-slate-700">Persönlicher Ansprechpartner vor Ort</span>
+                            </div>
+                            <div className="flex items-center gap-4 p-3.5 bg-white border border-green-200 rounded-xl shadow-sm hover:border-green-400 hover:shadow-md transition-all">
+                                <div className="flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-full bg-green-500 text-white font-bold text-sm">✓</div>
+                                <span className="text-base md:text-lg font-semibold text-slate-700">Eigene Planung & Installation</span>
+                            </div>
                         </div>
 
                         {/* Question for the cards */}
-                        <h3 className="text-lg font-bold text-slate-800 mb-4">Welcher Haustyp ist es?</h3>
+                        <h3 className="text-xl md:text-2xl font-extrabold text-slate-800 mb-5">Welcher Haustyp ist es?</h3>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                         <SelectionCard
