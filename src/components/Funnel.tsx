@@ -140,58 +140,58 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
         case 1: // Building Type
             return (
                 <div>
-                    <h2 className="text-2xl md:text-4xl font-extrabold text-slate-800 text-center mb-4 max-w-3xl mx-auto leading-tight">
+                    <h2 className="text-xl md:text-2xl font-extrabold text-slate-800 text-center mb-1 max-w-3xl mx-auto leading-tight">
                         Ihr regionaler Solar-Fachbetrieb. Keine Vermittler.
                     </h2>
-                    <p className="text-lg md:text-xl text-gray-600 text-center font-medium mb-10 max-w-2xl mx-auto">
+                    <p className="text-base text-gray-600 text-center font-medium mb-4 max-w-2xl mx-auto">
                         In nur 2 Minuten zum Angebot. Welcher Haustyp ist&nbsp;es?
                     </p>
-                    <div className="grid grid-cols-2 gap-4 md:gap-8">
+                    <div className="grid grid-cols-2 gap-3">
                         <SelectionCard
                             label="Einfamilienhaus"
                             selected={formData.buildingType === 'Einfamilienhaus'}
                             onClick={() => handleDelayedSelection('buildingType', 'Einfamilienhaus')}
                             imageSrc="/Einfamilienhaus.jpg"
-                            className="!h-32 md:!h-auto !aspect-auto md:!aspect-video h-full"
+                            className="!h-24 md:!h-auto !aspect-auto md:!aspect-video h-full"
                         />
                         <SelectionCard
                             label="Doppelhaushälfte"
                             selected={formData.buildingType === 'Doppelhaushälfte'}
                             onClick={() => handleDelayedSelection('buildingType', 'Doppelhaushälfte')}
                             imageSrc="/Doppelhaushalfte.jpg"
-                            className="!h-32 md:!h-auto !aspect-auto md:!aspect-video h-full"
+                            className="!h-24 md:!h-auto !aspect-auto md:!aspect-video h-full"
                         />
                         <SelectionCard
                             label="Reihenhaus"
                             selected={formData.buildingType === 'Reihenhaus'}
                             onClick={() => handleDelayedSelection('buildingType', 'Reihenhaus')}
                             imageSrc="/Reihenhaus.jpg"
-                            className="!h-32 md:!h-auto !aspect-auto md:!aspect-video h-full"
+                            className="!h-24 md:!h-auto !aspect-auto md:!aspect-video h-full"
                         />
                         <SelectionCard
                             label="Mehrfamilienhaus"
                             selected={formData.buildingType === 'Mehrfamilienhaus'}
                             onClick={() => handleDelayedSelection('buildingType', 'Mehrfamilienhaus')}
                             imageSrc="/Mehrfamilien-haus.jpg"
-                            className="!h-32 md:!h-auto !aspect-auto md:!aspect-video h-full"
+                            className="!h-24 md:!h-auto !aspect-auto md:!aspect-video h-full"
                         />
                         <SelectionCard
                             label="Gewerbe"
                             selected={formData.buildingType === 'Gewerbe'}
                             onClick={() => handleDelayedSelection('buildingType', 'Gewerbe')}
                             imageSrc="/gewerbe.jpg"
-                            className="!h-32 md:!h-auto !aspect-auto md:!aspect-video h-full"
+                            className="!h-24 md:!h-auto !aspect-auto md:!aspect-video h-full"
                         />
                         <SelectionCard
                             label="Nicht sicher"
                             selected={formData.buildingType === 'other'}
                             onClick={() => handleDelayedSelection('buildingType', 'other')}
                             imageSrc="/nichtsicher.jpg"
-                            className="!h-32 md:!h-auto !aspect-auto md:!aspect-video h-full"
+                            className="!h-24 md:!h-auto !aspect-auto md:!aspect-video h-full"
                         />
                     </div>
                     <div className="flex justify-center">
-                        <a href="https://www.google.com/maps/place/SED+-+Solar+GmbH/@49.4281327,11.02889,645m/data=!3m2!1e3!5s0x479f56c19737a815:0xe06d13f1060e3ad0!4m6!3m5!1s0x479f51b822ef58d9:0xe953a4a0425e563f!8m2!3d49.4281327!4d11.0314649!16s%2Fg%2F11txvmpyn7?entry=ttu&g_ep=EgoyMDI2MDIxOC4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener noreferrer" className="bg-gray-50 border border-gray-200 rounded-full px-4 py-1.5 inline-flex items-center shadow-sm mt-8 mb-4 transition-all hover:bg-gray-100 hover:shadow no-underline cursor-pointer">
+                        <a href="https://www.google.com/maps/place/SED+-+Solar+GmbH/@49.4281327,11.02889,645m/data=!3m2!1e3!5s0x479f56c19737a815:0xe06d13f1060e3ad0!4m6!3m5!1s0x479f51b822ef58d9:0xe953a4a0425e563f!8m2!3d49.4281327!4d11.0314649!16s%2Fg%2F11txvmpyn7?entry=ttu&g_ep=EgoyMDI2MDIxOC4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener noreferrer" className="bg-gray-50 border border-gray-200 rounded-full px-4 py-1.5 inline-flex items-center shadow-sm mt-4 mb-4 transition-all hover:bg-gray-100 hover:shadow no-underline cursor-pointer">
                             <span className="text-yellow-500 text-2xl">⭐️⭐️⭐️⭐️⭐️</span>
                             <span className="ml-2 text-gray-700 font-semibold">4.9/5 (Kundenbewertungen)</span>
                         </a>
