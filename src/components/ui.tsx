@@ -45,10 +45,12 @@ export const SelectionCard: React.FC<SelectionCardProps> = ({ label, selected, o
             whileTap={{ scale: 0.99 }}
             onClick={onClick}
             className={cn(
-                "w-full rounded-xl border-2 text-left transition-all duration-200 flex flex-col items-center shadow-sm relative overflow-hidden",
+                "w-full rounded-xl border text-left transition-all duration-300 flex flex-col items-center shadow-sm relative overflow-hidden cursor-pointer",
+                "bg-white border-gray-200",
+                "hover:-translate-y-1 hover:shadow-lg hover:border-green-500",
                 selected
-                    ? "border-green-600 bg-green-50 ring-2 ring-green-600/20"
-                    : "border-gray-300 bg-white hover:border-green-400 hover:shadow-md",
+                    ? "border-2 border-green-600 bg-green-50 ring-2 ring-green-600/20"
+                    : "",
                 imageSrc ? "p-0 aspect-video" : "py-6 px-4 md:p-8 justify-center gap-3",
                 className
             )}
