@@ -140,11 +140,11 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
         case 1: // Building Type
             return (
                 <div>
-                    <h2 className="text-xl md:text-2xl font-extrabold text-slate-800 text-center mb-1 max-w-3xl mx-auto leading-tight">
-                        Ihr regionaler Solar-Fachbetrieb. Keine Vermittler.
+                    <h2 className="text-2xl md:text-3xl font-extrabold text-slate-800 text-center mb-4 max-w-lg mx-auto leading-tight">
+                        SED Solar – Ihr regionaler Fachbetrieb.
                     </h2>
-                    <p className="text-base text-gray-600 text-center font-medium mb-4 max-w-2xl mx-auto">
-                        In nur 2 Minuten zum Angebot. Welcher Haustyp ist&nbsp;es?
+                    <p className="text-lg text-gray-600 text-center font-medium mb-10 max-w-md mx-auto">
+                        Kostenloses Angebot in nur 2 Minuten. Welcher Haustyp ist&nbsp;es?
                     </p>
                     <div className="grid grid-cols-2 gap-3">
                         <SelectionCard
