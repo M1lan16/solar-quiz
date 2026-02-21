@@ -140,12 +140,38 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
         case 1: // Building Type
             return (
                 <div>
-                    <h2 className="text-2xl md:text-3xl font-extrabold text-slate-800 text-center mb-4 max-w-lg mx-auto leading-tight">
-                        SED Solar – Ihr regionaler Fachbetrieb.
-                    </h2>
-                    <p className="text-lg text-gray-600 text-center font-medium mb-10 max-w-md mx-auto">
-                        Kostenloses Angebot in nur 2 Minuten. Welcher Haustyp ist&nbsp;es?
-                    </p>
+                    <div className="text-center max-w-3xl mx-auto mb-6">
+                        {/* 1. Main Heading */}
+                        <h2 className="text-2xl md:text-3xl font-extrabold text-slate-800 mb-2 leading-tight">
+                            SED Solar – Ihr regionaler Fachbetrieb aus Nürnberg
+                        </h2>
+
+                        {/* 2. Trust Rating */}
+                        <div className="flex items-center justify-center gap-1 text-yellow-500 font-bold mb-4">
+                            <span className="text-lg">⭐ 4,9 von 5 Sternen</span>
+                            <span className="text-gray-500 text-sm font-normal lowercase">(96+ Bewertungen)</span>
+                        </div>
+
+                        {/* 3. Action Text */}
+                        <p className="text-lg md:text-xl font-bold text-slate-700 mb-2">
+                            JETZT prüfen: Lohnt sich eine Solaranlage für Ihr Haus in Nürnberg?
+                        </p>
+
+                        {/* 4. Description */}
+                        <p className="text-sm md:text-base text-gray-600 mb-4 max-w-2xl mx-auto">
+                            Beantworten Sie 10 kurze Fragen (ca. 2 Minuten). Anschließend erhalten Sie eine persönliche Beratung durch unser eigenes Expertenteam.
+                        </p>
+
+                        {/* 5. USPs (Bullet points) */}
+                        <div className="flex flex-col md:flex-row justify-center items-center gap-2 md:gap-6 text-sm text-green-700 font-semibold mb-8 bg-green-50 py-3 px-4 rounded-lg">
+                            <span className="flex items-center gap-1">✔ Kostenlos & unverbindlich</span>
+                            <span className="flex items-center gap-1">✔ Persönlicher Ansprechpartner vor Ort</span>
+                            <span className="flex items-center gap-1">✔ Eigene Planung & Installation</span>
+                        </div>
+
+                        {/* Question for the cards */}
+                        <h3 className="text-lg font-bold text-slate-800 mb-4">Welcher Haustyp ist es?</h3>
+                    </div>
                     <div className="grid grid-cols-2 gap-3">
                         <SelectionCard
                             label="Einfamilienhaus"
