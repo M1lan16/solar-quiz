@@ -140,9 +140,22 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
         case 1: // Building Type
             return (
                 <div>
-                    <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-6 md:mb-10 text-center leading-tight">
+                    <a
+                        href="https://www.google.com/maps/place/SED+-+Solar+GmbH/@49.4281327,11.02889,645m/data=!3m2!1e3!5s0x479f56c19737a815:0xe06d13f1060e3ad0!4m6!3m5!1s0x479f51b822ef58d9:0xe953a4a0425e563f!8m2!3d49.4281327!4d11.0314649!16s%2Fg%2F11txvmpyn7?entry=ttu&g_ep=EgoyMDI2MDIxOC4wIKXMDSoASAFQAw%3D%3D"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-2 mb-6 bg-white border border-amber-100 rounded-full py-2 px-6 shadow-sm hover:shadow-md transition-all mx-auto w-fit no-underline group"
+                    >
+                        <span className="text-lg">⭐️⭐️⭐️⭐️⭐️</span>
+                        <span className="text-slate-900 font-bold ml-1">4.9/5</span>
+                        <span className="text-slate-500 text-sm ml-1 font-medium group-hover:text-slate-700 transition-colors">(Kundenbewertungen)</span>
+                    </a>
+                    <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-3 text-center leading-tight">
                         Welcher Haustyp ist es?
                     </h2>
+                    <p className="text-gray-600 text-center mb-8 md:mb-12 max-w-lg mx-auto leading-relaxed">
+                        Finden Sie heraus, ob sich Solar für Sie lohnt. Direkt vom regionalen Fachbetrieb — keine Vermittler!
+                    </p>
                     <div className="grid grid-cols-2 gap-4 md:gap-8">
                         <SelectionCard
                             label="Einfamilienhaus"
