@@ -51,7 +51,7 @@ export const SelectionCard: React.FC<SelectionCardProps> = ({ label, selected, o
                 selected
                     ? "border-2 border-green-600 bg-green-50 ring-2 ring-green-600/20"
                     : "",
-                imageSrc ? "p-0 aspect-video" : "py-6 px-4 md:p-8 justify-center gap-3",
+                imageSrc ? "p-0 aspect-video" : "py-6 px-1 md:px-8 justify-center gap-3",
                 className
             )}
         >
@@ -72,7 +72,7 @@ export const SelectionCard: React.FC<SelectionCardProps> = ({ label, selected, o
                         />
                     </div>
                     <div className="w-full h-1/4 flex items-center justify-center bg-white border-t border-gray-200">
-                        <span className={cn("text-lg md:text-xl font-bold text-center leading-tight px-2", selected ? "text-green-900" : "text-gray-800")}>
+                        <span className={cn("text-[11px] min-[375px]:text-xs sm:text-sm md:text-base font-bold text-center leading-tight break-words px-1 w-full", selected ? "text-green-900" : "text-gray-800")}>
                             {label}
                         </span>
                     </div>
@@ -80,7 +80,7 @@ export const SelectionCard: React.FC<SelectionCardProps> = ({ label, selected, o
             ) : (
                 <>
                     {icon && <span className={cn("text-4xl transition-colors", selected ? "text-green-600" : "text-gray-500 group-hover:text-green-600")}>{icon}</span>}
-                    <span className={cn("text-xl font-bold text-center leading-tight", selected ? "text-green-900" : "text-gray-800")}>{label}</span>
+                    <span className={cn("text-[11px] min-[375px]:text-xs sm:text-sm md:text-base font-bold text-center leading-tight break-words px-1 w-full", selected ? "text-green-900" : "text-gray-800")}>{label}</span>
                 </>
             )}
         </motion.button>
