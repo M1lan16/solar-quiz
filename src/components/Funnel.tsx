@@ -140,15 +140,11 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
         case 1: // Building Type
             return (
                 <div>
-                    <a href="https://www.google.com/maps/place/SED+-+Solar+GmbH/@49.4281327,11.02889,645m/data=!3m2!1e3!5s0x479f56c19737a815:0xe06d13f1060e3ad0!4m6!3m5!1s0x479f51b822ef58d9:0xe953a4a0425e563f!8m2!3d49.4281327!4d11.0314649!16s%2Fg%2F11txvmpyn7?entry=ttu&g_ep=EgoyMDI2MDIxOC4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener noreferrer" className="bg-gray-50 border border-gray-200 rounded-full px-4 py-1.5 inline-flex items-center shadow-sm mb-4 transition-all hover:bg-gray-100 hover:shadow no-underline cursor-pointer mx-auto">
-                        <span className="text-yellow-500 text-2xl">⭐️⭐️⭐️⭐️⭐️</span>
-                        <span className="ml-2 text-gray-700 font-semibold">4.9/5 (Kundenbewertungen)</span>
-                    </a>
-                    <h2 className="text-2xl md:text-4xl font-bold text-slate-800 mb-3 text-center leading-tight">
-                        Welcher Haustyp ist es?
+                    <h2 className="text-2xl md:text-3xl font-bold text-slate-800 text-center mb-2 leading-tight">
+                        In nur 2 Minuten herausfinden, ob sich Solar für Sie lohnt. Direkt vom regionalen Fachbetrieb!
                     </h2>
-                    <p className="text-center text-gray-600 mb-10 mt-2 max-w-md mx-auto">
-                        Finden Sie heraus, ob sich Solar für Sie lohnt. Direkt vom regionalen Fachbetrieb — keine Vermittler!
+                    <p className="text-xl text-gray-600 text-center font-semibold mb-6">
+                        Welcher Haustyp ist es?
                     </p>
                     <div className="grid grid-cols-2 gap-4 md:gap-8">
                         <SelectionCard
@@ -193,6 +189,12 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
                             imageSrc="/nichtsicher.jpg"
                             className="!h-32 md:!h-auto !aspect-auto md:!aspect-video h-full"
                         />
+                    </div>
+                    <div className="flex justify-center">
+                        <a href="https://www.google.com/maps/place/SED+-+Solar+GmbH/@49.4281327,11.02889,645m/data=!3m2!1e3!5s0x479f56c19737a815:0xe06d13f1060e3ad0!4m6!3m5!1s0x479f51b822ef58d9:0xe953a4a0425e563f!8m2!3d49.4281327!4d11.0314649!16s%2Fg%2F11txvmpyn7?entry=ttu&g_ep=EgoyMDI2MDIxOC4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener noreferrer" className="bg-gray-50 border border-gray-200 rounded-full px-4 py-1.5 inline-flex items-center shadow-sm mt-8 mb-4 transition-all hover:bg-gray-100 hover:shadow no-underline cursor-pointer">
+                            <span className="text-yellow-500 text-2xl">⭐️⭐️⭐️⭐️⭐️</span>
+                            <span className="ml-2 text-gray-700 font-semibold">4.9/5 (Kundenbewertungen)</span>
+                        </a>
                     </div>
                 </div>
             );
