@@ -196,10 +196,10 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
                             href="https://www.google.com/maps/place/SED+-+Solar+GmbH/@49.4281327,11.02889,645m/data=!3m2!1e3!5s0x479f56c19737a815:0xe06d13f1060e3ad0!4m6!3m5!1s0x479f51b822ef58d9:0xe953a4a0425e563f!8m2!3d49.4281327!4d11.0314649!16s%2Fg%2F11txvmpyn7?entry=ttu&g_ep=EgoyMDI2MDIxOC4wIKXMDSoASAFQAw%3D%3D"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 bg-white border border-gray-200 rounded-full px-6 py-3 shadow-sm hover:shadow hover:bg-gray-50 transition-all"
+                            className="inline-flex items-center gap-3 bg-white border border-gray-200 rounded-full px-4 py-2 shadow-sm hover:shadow hover:bg-gray-50 transition-all"
                         >
-                            <img src="/google.jpg" alt="Google" className="h-7 w-7 object-contain" />
-                            <img src="/stars.png" alt="Google Stars Rating" className="h-7 w-auto object-contain" />
+                            <img src="/google.jpg" alt="Google" className="w-8 h-8 object-contain" />
+                            <img src="/stars.png" alt="Google Stars Rating" className="h-8 w-auto object-contain" />
                         </a>
                     </div>
                 </div>
