@@ -199,8 +199,7 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
                             className="inline-flex items-center gap-2 bg-white border border-gray-200 rounded-full px-4 py-2 shadow-sm hover:shadow hover:bg-gray-50 transition-all"
                         >
                             <img src="/google.jpg" alt="Google" className="w-5 h-5 object-contain" />
-                            <span className="text-yellow-500 text-lg">⭐️⭐️⭐️⭐️⭐️</span>
-                            <span className="text-sm font-bold text-gray-700">4.9/5 (Kundenbewertungen)</span>
+                            <img src="/google-stars.png" alt="4,9 ⭐️⭐️⭐️⭐️⭐️ (97)" className="h-5 w-auto object-contain" />
                         </a>
                     </div>
                 </div>
