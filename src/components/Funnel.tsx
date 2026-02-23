@@ -147,8 +147,7 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
                         </h2>
 
                         {/* Partner Logos Section */}
-                        <div className="mb-6 md:mb-8 text-center max-w-2xl mx-auto px-2">
-                            <p className="text-sm font-bold text-slate-700 mb-4 uppercase tracking-wider">Unsere starken Partner:</p>
+                        <div className="mb-4 md:mb-6 text-center max-w-2xl mx-auto px-2">
                             <div className="flex flex-wrap justify-center items-center gap-4 md:gap-6">
                                 <img src="https://solar-sed.de/wp-content/uploads/2025/06/viessman-e1750618168882.jpg" alt="Viessmann" className="h-9 md:h-11 w-auto object-contain transition-transform duration-300 hover:scale-105" />
                                 <img src="https://solar-sed.de/wp-content/uploads/2025/03/solarfabrik.png" alt="Solar Fabrik" className="h-9 md:h-11 w-auto object-contain transition-transform duration-300 hover:scale-105" />
