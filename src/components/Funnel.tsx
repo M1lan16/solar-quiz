@@ -146,11 +146,17 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
                             SED Solar – Ihr regionaler Fachbetrieb aus Nürnberg
                         </h2>
 
-                        {/* 2. Trust Rating (Pill design) */}
-                        <div className="inline-flex items-center justify-center gap-2 bg-yellow-50 border border-yellow-200 rounded-full px-4 py-1.5 mb-8 shadow-sm">
-                            <span className="text-yellow-500 text-lg">⭐⭐⭐⭐⭐</span>
-                            <span className="text-yellow-800 font-bold">4,9 von 5</span>
-                            <span className="text-gray-600 text-sm font-medium">(96+ Bewertungen)</span>
+                        {/* Partner Logos Section */}
+                        <div className="mb-6 md:mb-8 text-center max-w-2xl mx-auto px-2">
+                            <p className="text-xs md:text-sm font-semibold text-gray-400 mb-4 uppercase tracking-widest">Unsere starken Partner:</p>
+                            <div className="flex flex-wrap justify-center items-center gap-4 md:gap-6">
+                                <img src="https://solar-sed.de/wp-content/uploads/2025/06/viessman-e1750618168882.jpg" alt="Viessmann" className="h-10 w-auto object-contain grayscale contrast-125 opacity-90 hover:grayscale-0 hover:contrast-100 hover:opacity-100 transition-all duration-300 mix-blend-multiply" />
+                                <img src="https://solar-sed.de/wp-content/uploads/2025/03/solarfabrik.png" alt="Solar Fabrik" className="h-10 w-auto object-contain grayscale contrast-125 opacity-90 hover:grayscale-0 hover:contrast-100 hover:opacity-100 transition-all duration-300 mix-blend-multiply" />
+                                <img src="https://solar-sed.de/wp-content/uploads/2025/03/SMA.png" alt="SMA" className="h-10 w-auto object-contain grayscale contrast-125 opacity-90 hover:grayscale-0 hover:contrast-100 hover:opacity-100 transition-all duration-300 mix-blend-multiply" />
+                                <img src="https://solar-sed.de/wp-content/uploads/2025/03/senec.png" alt="SENEC" className="h-10 w-auto object-contain grayscale contrast-125 opacity-90 hover:grayscale-0 hover:contrast-100 hover:opacity-100 transition-all duration-300 mix-blend-multiply" />
+                                <img src="https://solar-sed.de/wp-content/uploads/2025/03/huawei.png" alt="Huawei" className="h-10 w-auto object-contain grayscale contrast-125 opacity-90 hover:grayscale-0 hover:contrast-100 hover:opacity-100 transition-all duration-300 mix-blend-multiply" />
+                                <img src="https://solar-sed.de/wp-content/uploads/2025/03/alpha.png" alt="Alpha ESS" className="h-10 w-auto object-contain grayscale contrast-125 opacity-90 hover:grayscale-0 hover:contrast-100 hover:opacity-100 transition-all duration-300 mix-blend-multiply" />
+                            </div>
                         </div>
 
                         {/* 3. Action Text */}
@@ -232,18 +238,6 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
                             <img src="/google.jpg" alt="Google" className="w-8 h-8 object-contain" />
                             <img src="/stars.png" alt="Google Stars Rating" className="h-8 w-auto object-contain" />
                         </a>
-                    </div>
-                    {/* Partner Logos Section */}
-                    <div className="mt-8 mb-6 text-center max-w-2xl mx-auto px-4">
-                        <p className="text-xs md:text-sm font-semibold text-gray-400 mb-4 uppercase tracking-widest">Unsere starken Partner:</p>
-                        <div className="flex flex-wrap justify-center items-center gap-4 md:gap-6">
-                            <img src="https://solar-sed.de/wp-content/uploads/2025/06/viessman-e1750618168882.jpg" alt="Viessmann" className="h-10 w-auto object-contain grayscale contrast-125 opacity-90 hover:grayscale-0 hover:contrast-100 hover:opacity-100 transition-all duration-300 mix-blend-multiply" />
-                            <img src="https://solar-sed.de/wp-content/uploads/2025/03/solarfabrik.png" alt="Solar Fabrik" className="h-10 w-auto object-contain grayscale contrast-125 opacity-90 hover:grayscale-0 hover:contrast-100 hover:opacity-100 transition-all duration-300 mix-blend-multiply" />
-                            <img src="https://solar-sed.de/wp-content/uploads/2025/03/SMA.png" alt="SMA" className="h-10 w-auto object-contain grayscale contrast-125 opacity-90 hover:grayscale-0 hover:contrast-100 hover:opacity-100 transition-all duration-300 mix-blend-multiply" />
-                            <img src="https://solar-sed.de/wp-content/uploads/2025/03/senec.png" alt="SENEC" className="h-10 w-auto object-contain grayscale contrast-125 opacity-90 hover:grayscale-0 hover:contrast-100 hover:opacity-100 transition-all duration-300 mix-blend-multiply" />
-                            <img src="https://solar-sed.de/wp-content/uploads/2025/03/huawei.png" alt="Huawei" className="h-10 w-auto object-contain grayscale contrast-125 opacity-90 hover:grayscale-0 hover:contrast-100 hover:opacity-100 transition-all duration-300 mix-blend-multiply" />
-                            <img src="https://solar-sed.de/wp-content/uploads/2025/03/alpha.png" alt="Alpha ESS" className="h-10 w-auto object-contain grayscale contrast-125 opacity-90 hover:grayscale-0 hover:contrast-100 hover:opacity-100 transition-all duration-300 mix-blend-multiply" />
-                        </div>
                     </div>
                 </div>
             );
