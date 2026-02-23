@@ -233,6 +233,18 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
                             <img src="/stars.png" alt="Google Stars Rating" className="h-8 w-auto object-contain" />
                         </a>
                     </div>
+                    {/* Partner Logos Section */}
+                    <div className="mt-8 mb-6 text-center max-w-2xl mx-auto px-4">
+                        <p className="text-xs md:text-sm font-semibold text-gray-400 mb-4 uppercase tracking-widest">Unsere starken Partner:</p>
+                        <div className="flex flex-wrap justify-center items-center gap-4 md:gap-6">
+                            <img src="https://solar-sed.de/wp-content/uploads/2025/06/viessman-e1750618168882.jpg" alt="Viessmann" className="h-6 md:h-8 w-auto object-contain grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-300 mix-blend-multiply" />
+                            <img src="https://solar-sed.de/wp-content/uploads/2025/03/solarfabrik.png" alt="Solar Fabrik" className="h-6 md:h-8 w-auto object-contain grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-300" />
+                            <img src="https://solar-sed.de/wp-content/uploads/2025/03/SMA.png" alt="SMA" className="h-5 md:h-7 w-auto object-contain grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-300" />
+                            <img src="https://solar-sed.de/wp-content/uploads/2025/03/senec.png" alt="SENEC" className="h-6 md:h-8 w-auto object-contain grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-300" />
+                            <img src="https://solar-sed.de/wp-content/uploads/2025/03/huawei.png" alt="Huawei" className="h-6 md:h-8 w-auto object-contain grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-300" />
+                            <img src="https://solar-sed.de/wp-content/uploads/2025/03/alpha.png" alt="Alpha ESS" className="h-6 md:h-8 w-auto object-contain grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-300" />
+                        </div>
+                    </div>
                 </div>
             );
 
