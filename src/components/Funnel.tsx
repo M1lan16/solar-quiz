@@ -457,11 +457,27 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
 
             return (
                 <div>
+                    {formData.zipCode && (
+                        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl shadow-sm text-center animate-fade-in">
+                            <div className="flex items-center justify-center gap-2 mb-1">
+                                <span className="flex h-3 w-3 relative">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                                </span>
+                                <p className="text-green-800 font-bold text-sm md:text-base">
+                                    Ja, wir sind in {formData.zipCode} verfügbar!
+                                </p>
+                            </div>
+                            <p className="text-green-700 text-xs md:text-sm font-medium">
+                                Heute wurden bereits 14 Dächer in Ihrer Region geprüft.
+                            </p>
+                        </div>
+                    )}
                     <div className="flex justify-center mb-6">
                         <CheckCircle className="w-16 h-16 text-green-500 animate-in fade-in zoom-in duration-500" />
                     </div>
                     <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-3 text-center leading-tight">
-                        Klasse! Wir sind in {formData.zipCode || 'Ihrer Region'} verfügbar.
+                        Klasse! Nur noch ein kleiner Schritt...
                     </h2>
                     <p className="text-lg md:text-xl text-gray-600 mb-8 md:mb-12 text-center">
                         Wie dürfen wir Sie ansprechen?
