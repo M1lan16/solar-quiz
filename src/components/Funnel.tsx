@@ -70,7 +70,10 @@ const SuccessScreen = () => (
 
 // Validation Helper
 const getValidationError = (field: keyof FunnelState, value: string): string | null => {
-    if (!value) return null; // No error if empty (just disabled button)
+    if (!value && (field === 'email' || field === 'phone')) {
+        return "Dieses Feld ist ein Pflichtfeld.";
+    }
+    if (!value) return null; // No error if empty for non-mandatory fields (just disabled button)
 
     switch (field) {
         case 'firstName':
@@ -362,6 +365,8 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
                     <div className="flex flex-col gap-4">
                         <InputField
                             label="Name"
+                            required
+                            requiredIndicator={true}
                             value={formData.lastName}
                             onChange={(e) => updateField('lastName', e.target.value)}
                             placeholder="Ihr Name"
@@ -370,6 +375,8 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
                             label="Telefonnummer"
                             type="tel"
                             prefix="+49"
+                            required
+                            requiredIndicator={true}
                             value={formData.phone}
                             onChange={(e) => updateField('phone', e.target.value)}
                             placeholder="170 12345678"
@@ -529,8 +536,10 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
                         Bitte geben Sie Ihre E-Mail-Adresse ein.
                     </p>
                     <InputField
-                        label="E-Mail"
+                        label="E-Mail Adresse"
                         type="email"
+                        required
+                        requiredIndicator={true}
                         value={formData.email}
                         onChange={(e) => updateField('email', e.target.value)}
                         placeholder="max@beispiel.de"
@@ -617,12 +626,13 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
                         Wir rufen Sie kurz zur Klärung der Details an.
                     </p>
                     <InputField
-                        label="Mobilfunknummer / Festnetz"
+                        label="Telefonnummer"
                         type="tel"
-                        prefix="+49"
+                        required
+                        requiredIndicator={true}
                         value={phoneDisplayValue}
                         onChange={handlePhoneChange}
-                        placeholder="170 12345678"
+                        placeholder="+49 151 12345678"
                         error={phoneError || undefined}
                     />
                     <button

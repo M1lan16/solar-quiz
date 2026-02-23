@@ -91,13 +91,14 @@ interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
     label: string;
     error?: string;
     prefix?: string;
+    requiredIndicator?: boolean;
 }
 
-export const InputField: React.FC<InputFieldProps> = ({ label, error, prefix, className, ...props }) => {
+export const InputField: React.FC<InputFieldProps> = ({ label, error, prefix, requiredIndicator, className, ...props }) => {
     return (
         <div className="w-full mb-6">
             <label className="block text-base font-bold text-gray-800 mb-3 uppercase tracking-wider">
-                {label}
+                {label} {requiredIndicator && <span className="text-red-500">*</span>}
             </label>
             <div className="relative group">
                 {prefix && (
