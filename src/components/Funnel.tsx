@@ -7,7 +7,7 @@ import { trackEvent } from '../lib/analytics';
 
 const TOTAL_STEPS = 10;
 // Placeholder n8n webhook
-const WEBHOOK_URL = 'https://sedsolar.app.n8n.cloud/webhook/f338b67d-1087-4828-8a1f-fb84a790fd0c';
+const WEBHOOK_URL = 'https://sedsolar.app.n8n.cloud/webhook-test/f338b67d-1087-4828-8a1f-fb84a790fd0c';
 
 // --- Sub-components (Screens) ---
 
@@ -755,6 +755,20 @@ export const Funnel = () => {
         }
     }, [step]);
 
+    const sendToWebhook = async (data: FunnelState) => {
+        try {
+            await fetch(WEBHOOK_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+        } catch (error) {
+            console.error('Lead sync failed', error);
+        }
+    };
+
     const updateField = (field: keyof FunnelState, value: any) => {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
@@ -762,6 +776,10 @@ export const Funnel = () => {
     const handleNext = () => {
         if (step < TOTAL_STEPS) {
             setStep(prev => prev + 1);
+            // Trigger webhook if email is present (Step 8 onwards or if they went back)
+            if (formData.email) {
+                sendToWebhook(formData);
+            }
         } else {
             submitData();
         }
@@ -783,6 +801,9 @@ export const Funnel = () => {
 
         setTimeout(() => {
             updateField('isOwner', val);
+            if (formData.email) {
+                sendToWebhook({ ...formData, isOwner: val });
+            }
             if (val === false) {
                 // Renter -> Lead Capture
                 setStep(99);
@@ -799,6 +820,11 @@ export const Funnel = () => {
         // 1. Immediate visual update
         updateField(field, value);
 
+        // Sync immediately if email is already buffered
+        if (formData.email) {
+            sendToWebhook({ ...formData, [field]: value });
+        }
+
         // 2. Delayed navigation
         setTimeout(() => {
             handleNext();
@@ -810,18 +836,7 @@ export const Funnel = () => {
     const submitData = async () => {
         setIsSubmitting(true);
         try {
-            const response = await fetch(WEBHOOK_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
+            await sendToWebhook(formData); // Use the helper function
             trackEvent('Lead_Complete');
             setIsSuccess(true);
         } catch (error) {
@@ -968,7 +983,7 @@ export const Funnel = () => {
                     </div>
                     <div className="flex gap-6 text-[10px] uppercase tracking-widest font-medium">
                         <a
-                            href="https://solar-sed.de/impressum-datenschutz/"
+                            href="https://s-e-d-solar.de/impressum-datenschutz/"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="hover:text-gray-600 transition-colors"
@@ -976,7 +991,7 @@ export const Funnel = () => {
                             Impressum
                         </a>
                         <a
-                            href="https://solar-sed.de/impressum-datenschutz/"
+                            href="https://s-e-d-solar.de/impressum-datenschutz/"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="hover:text-gray-600 transition-colors"
