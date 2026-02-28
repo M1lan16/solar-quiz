@@ -1,8 +1,16 @@
 import React, { useEffect } from 'react';
 import { ANALYTICS_CONFIG } from '../lib/analytics-config';
+import { getLeadSession } from '../lib/analytics';
 
 export const Analytics: React.FC = () => {
+    // Session State Management (Persistence)
     useEffect(() => {
+        // Initialize or restore session on mount
+        const session = getLeadSession();
+        if (session.email) {
+            console.log('[Analytics] Session restored for lead:', session.email);
+        }
+
         // --- 1. Microsoft Clarity ---
         (function (c: any, l: any, a: any, r: any, i: any, t?: any, y?: any) {
             c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
@@ -15,7 +23,7 @@ export const Analytics: React.FC = () => {
         (function (f: any, b: any, e: any, v: any, n?: any, t?: any, s?: any) {
             if (f.fbq) return; n = f.fbq = function () {
                 n.callMethod ?
-                n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+                    n.callMethod.apply(n, arguments) : n.queue.push(arguments)
             };
             if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
             n.queue = []; t = b.createElement(e); t.async = !0;

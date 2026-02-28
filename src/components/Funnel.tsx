@@ -3,11 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, Loader2, ThumbsUp, ThumbsDown, HelpCircle, Sun, SunMoon, Scale } from 'lucide-react';
 import { ProgressBar, SelectionCard, InputField } from './ui';
 import { FunnelState, INITIAL_STATE } from '../types';
-import { trackEvent } from '../lib/analytics';
+import { trackEvent, syncLeadData } from '../lib/analytics';
 
 const TOTAL_STEPS = 10;
-// Placeholder n8n webhook
-const WEBHOOK_URL = 'https://sedsolar.app.n8n.cloud/webhook-test/f338b67d-1087-4828-8a1f-fb84a790fd0c';
 
 // --- Sub-components (Screens) ---
 
@@ -753,12 +751,10 @@ export const Funnel = () => {
     // Real-time Lead Sync Heartbeat: Sync to n8n whenever important fields change
     // after the email has been collected (Step 8+). Debounced to avoid excessive hits.
     useEffect(() => {
-        const currentEmail = formData.email || localStorage.getItem('lead_email');
-
-        // Only sync if we have a valid-looking email (minimal check)
-        if (currentEmail && currentEmail.includes('@') && currentEmail.includes('.')) {
+        // Only sync if email exists in state (Step 8+)
+        if (formData.email && formData.email.includes('@')) {
             const syncTimer = setTimeout(() => {
-                sendToWebhook(formData);
+                syncLeadData(formData);
             }, 1000); // 1s debounce
             return () => clearTimeout(syncTimer);
         }
@@ -783,29 +779,6 @@ export const Funnel = () => {
         }
     }, [step]);
 
-    const sendToWebhook = async (data: FunnelState) => {
-        const currentEmail = data.email || formData.email || localStorage.getItem('lead_email');
-
-        if (!currentEmail) return; // Cannot match on n8n without email
-
-        const payload = {
-            ...data,
-            email: currentEmail, // Critical: Ensure email is always present for n8n lookup
-        };
-
-        try {
-            await fetch(WEBHOOK_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload),
-            });
-        } catch (error) {
-            console.error('Lead sync failed', error);
-        }
-    };
-
     const updateField = (field: keyof FunnelState, value: any) => {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
@@ -813,10 +786,9 @@ export const Funnel = () => {
     const handleNext = () => {
         if (step < TOTAL_STEPS) {
             setStep(prev => prev + 1);
-            // Trigger webhook if email is present (Step 8 onwards or if they went back)
-            const currentEmail = formData.email || localStorage.getItem('lead_email');
-            if (currentEmail) {
-                sendToWebhook({ ...formData, email: currentEmail });
+            // Sync on every transition after Step 8
+            if (formData.email) {
+                syncLeadData(formData);
             }
         } else {
             submitData();
@@ -839,9 +811,8 @@ export const Funnel = () => {
 
         setTimeout(() => {
             updateField('isOwner', val);
-            const currentEmail = formData.email || localStorage.getItem('lead_email');
-            if (currentEmail) {
-                sendToWebhook({ ...formData, isOwner: val, email: currentEmail });
+            if (formData.email) {
+                syncLeadData({ ...formData, isOwner: val });
             }
             if (val === false) {
                 // Renter -> Lead Capture
@@ -870,7 +841,7 @@ export const Funnel = () => {
     const submitData = async () => {
         setIsSubmitting(true);
         try {
-            await sendToWebhook(formData); // Use the helper function
+            await syncLeadData(formData);
             trackEvent('Lead_Complete');
             setIsSuccess(true);
         } catch (error) {
