@@ -750,6 +750,20 @@ export const Funnel = () => {
         }
     }, [formData.email]);
 
+    // Real-time Lead Sync Heartbeat: Sync to n8n whenever important fields change
+    // after the email has been collected (Step 8+). Debounced to avoid excessive hits.
+    useEffect(() => {
+        const currentEmail = formData.email || localStorage.getItem('lead_email');
+
+        // Only sync if we have a valid-looking email (minimal check)
+        if (currentEmail && currentEmail.includes('@') && currentEmail.includes('.')) {
+            const syncTimer = setTimeout(() => {
+                sendToWebhook(formData);
+            }, 1000); // 1s debounce
+            return () => clearTimeout(syncTimer);
+        }
+    }, [formData.email, formData.phone, formData.contactPreference, formData.lastName]);
+
     // Loading screen logic for Step 6
     useEffect(() => {
         if (step === 6) {
@@ -770,12 +784,13 @@ export const Funnel = () => {
     }, [step]);
 
     const sendToWebhook = async (data: FunnelState) => {
-        const email = data.email || localStorage.getItem('lead_email');
+        const currentEmail = data.email || formData.email || localStorage.getItem('lead_email');
 
-        // Capture refined payload with email as key
+        if (!currentEmail) return; // Cannot match on n8n without email
+
         const payload = {
             ...data,
-            email: email,
+            email: currentEmail, // Critical: Ensure email is always present for n8n lookup
         };
 
         try {
@@ -843,12 +858,6 @@ export const Funnel = () => {
     const handleDelayedSelection = (field: keyof FunnelState, value: any) => {
         // 1. Immediate visual update
         updateField(field, value);
-
-        // Sync immediately if email is already buffered
-        const currentEmail = formData.email || localStorage.getItem('lead_email');
-        if (currentEmail) {
-            sendToWebhook({ ...formData, [field]: value, email: currentEmail });
-        }
 
         // 2. Delayed navigation
         setTimeout(() => {
