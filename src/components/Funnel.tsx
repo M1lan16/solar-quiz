@@ -734,31 +734,6 @@ export const Funnel = () => {
         trackEvent('StepView', { step });
     }, [step]);
 
-    // Email Persistence: Sync email state with localStorage
-    useEffect(() => {
-        const savedEmail = localStorage.getItem('lead_email');
-        if (savedEmail && !formData.email) {
-            updateField('email', savedEmail);
-        }
-    }, []);
-
-    useEffect(() => {
-        if (formData.email) {
-            localStorage.setItem('lead_email', formData.email);
-        }
-    }, [formData.email]);
-
-    // Real-time Lead Sync Heartbeat: Sync to n8n whenever important fields change
-    // after the email has been collected (Step 8+). Debounced to avoid excessive hits.
-    useEffect(() => {
-        // Only sync if email exists in state (Step 8+)
-        if (formData.email && formData.email.includes('@')) {
-            const syncTimer = setTimeout(() => {
-                syncLeadData(formData);
-            }, 1000); // 1s debounce
-            return () => clearTimeout(syncTimer);
-        }
-    }, [formData.email, formData.phone, formData.contactPreference, formData.lastName]);
 
     // Loading screen logic for Step 6
     useEffect(() => {
@@ -786,10 +761,6 @@ export const Funnel = () => {
     const handleNext = () => {
         if (step < TOTAL_STEPS) {
             setStep(prev => prev + 1);
-            // Sync on every transition after Step 8
-            if (formData.email) {
-                syncLeadData(formData);
-            }
         } else {
             submitData();
         }
@@ -811,9 +782,6 @@ export const Funnel = () => {
 
         setTimeout(() => {
             updateField('isOwner', val);
-            if (formData.email) {
-                syncLeadData({ ...formData, isOwner: val });
-            }
             if (val === false) {
                 // Renter -> Lead Capture
                 setStep(99);
