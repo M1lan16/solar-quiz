@@ -736,6 +736,20 @@ export const Funnel = () => {
         trackEvent('StepView', { step });
     }, [step]);
 
+    // Email Persistence: Sync email state with localStorage
+    useEffect(() => {
+        const savedEmail = localStorage.getItem('lead_email');
+        if (savedEmail && !formData.email) {
+            updateField('email', savedEmail);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (formData.email) {
+            localStorage.setItem('lead_email', formData.email);
+        }
+    }, [formData.email]);
+
     // Loading screen logic for Step 6
     useEffect(() => {
         if (step === 6) {
@@ -756,13 +770,21 @@ export const Funnel = () => {
     }, [step]);
 
     const sendToWebhook = async (data: FunnelState) => {
+        const email = data.email || localStorage.getItem('lead_email');
+
+        // Capture refined payload with email as key
+        const payload = {
+            ...data,
+            email: email,
+        };
+
         try {
             await fetch(WEBHOOK_URL, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(data),
+                body: JSON.stringify(payload),
             });
         } catch (error) {
             console.error('Lead sync failed', error);
@@ -777,8 +799,9 @@ export const Funnel = () => {
         if (step < TOTAL_STEPS) {
             setStep(prev => prev + 1);
             // Trigger webhook if email is present (Step 8 onwards or if they went back)
-            if (formData.email) {
-                sendToWebhook(formData);
+            const currentEmail = formData.email || localStorage.getItem('lead_email');
+            if (currentEmail) {
+                sendToWebhook({ ...formData, email: currentEmail });
             }
         } else {
             submitData();
@@ -801,8 +824,9 @@ export const Funnel = () => {
 
         setTimeout(() => {
             updateField('isOwner', val);
-            if (formData.email) {
-                sendToWebhook({ ...formData, isOwner: val });
+            const currentEmail = formData.email || localStorage.getItem('lead_email');
+            if (currentEmail) {
+                sendToWebhook({ ...formData, isOwner: val, email: currentEmail });
             }
             if (val === false) {
                 // Renter -> Lead Capture
@@ -821,8 +845,9 @@ export const Funnel = () => {
         updateField(field, value);
 
         // Sync immediately if email is already buffered
-        if (formData.email) {
-            sendToWebhook({ ...formData, [field]: value });
+        const currentEmail = formData.email || localStorage.getItem('lead_email');
+        if (currentEmail) {
+            sendToWebhook({ ...formData, [field]: value, email: currentEmail });
         }
 
         // 2. Delayed navigation
