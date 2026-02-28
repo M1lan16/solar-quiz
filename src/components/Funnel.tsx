@@ -117,20 +117,20 @@ const getValidationError = (field: keyof FunnelState, value: string): string | n
             break;
         }
         case 'phone':
-            // Check start and length
-            if (!value.startsWith('+49')) {
-                return "Die Nummer muss mit +49 beginnen (z.B. +49 151...).";
+            const digitsOnly = value.replace(/\D/g, ''); // Count only the numbers
+
+            if (!value.startsWith('+49') && !value.startsWith('0')) {
+                return "Die Nummer muss mit 0 oder +49 beginnen.";
             }
-            if (value.length < 11) {
-                // Short numbers are not valid yet, but we might wait to show error?
-                // Request said "Real-time... as soon as... types something invalid".
-                // We'll show the error to be safe and responsive.
-                return "Die Nummer muss mit +49 beginnen (z.B. +49 151...).";
+            if (digitsOnly.length < 7) {
+                return "Die Telefonnummer ist zu kurz.";
             }
-            // Basic number check (optional, but requested "If invalid")
-            if (!/^[\d\s+]+$/.test(value)) {
-                return "Bitte nur Zahlen und Leerzeichen verwenden.";
+
+            // Basic Spam/Fake checks
+            if (/^(.)\1+$/.test(digitsOnly)) {
+                return "Bitte geben Sie eine gültige Telefonnummer ein.";
             }
+
             break;
     }
     return null;
@@ -140,50 +140,93 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
     switch (step) {
 
 
+        case 0: // Pre-Page
+            return (
+                <div className="flex flex-col items-center justify-start md:justify-center text-center min-h-full max-w-xl mx-auto px-2 pt-2 md:pt-0 pb-8">
+                    <img src="/logo1.png" alt="SED Solar Logo" className="h-20 md:h-28 w-auto object-contain mb-4 md:mb-8" />
+
+                    <h1 className="text-2xl md:text-4xl font-extrabold text-slate-900 mb-3 md:mb-4 leading-tight text-left w-full">
+                        In 2 Minuten zur Solareinschätzung für Ihr Zuhause
+                    </h1>
+
+                    <div className="w-full text-left mb-6 md:mb-8">
+                        <div className="bg-green-50 border border-green-100 rounded-xl py-3 md:py-4 pr-3 md:pr-4 pl-2 md:pl-4 -ml-2 md:-ml-4 w-[calc(100%+1rem)] md:w-[calc(100%+2rem)] shadow-sm">
+                            <p className="text-base md:text-lg text-slate-800 leading-relaxed font-semibold">
+                                Kurzer Fragen-Check – anschließend erhalten Sie eine <span className="text-green-700 font-extrabold block md:inline mt-1 md:mt-0">individuelle Erstberatung</span> durch SED Solar
+                            </p>
+                        </div>
+                    </div>
+
+                    <button
+                        onClick={handleNext}
+                        className="w-full max-w-md py-4 md:py-5 px-4 bg-green-600 hover:bg-green-700 text-white rounded-full font-bold text-[17px] sm:text-lg md:text-2xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 mb-2"
+                    >
+                        Persönliche Einschätzung starten
+                    </button>
+
+                    <p className="text-xs md:text-sm text-slate-500 font-semibold uppercase tracking-wider mb-8 md:mb-10">
+                        Kostenlos · unverbindlich
+                    </p>
+
+                    <div className="flex flex-col gap-3 mb-8 text-left w-full max-w-md mx-auto">
+                        <div className="flex items-center gap-4 p-3.5 bg-white border border-slate-100 rounded-2xl shadow-sm transition-all duration-300 hover:bg-slate-50 hover:border-green-200 hover:shadow-md active:scale-[0.98] cursor-default">
+                            <div className="flex-shrink-0">
+                                <CheckCircle className="w-6 h-6 text-green-500" strokeWidth={2.5} />
+                            </div>
+                            <span className="text-sm md:text-lg font-semibold text-slate-700">Regionaler Fachbetrieb aus Nürnberg</span>
+                        </div>
+                        <div className="flex items-center gap-4 p-3.5 bg-white border border-slate-100 rounded-2xl shadow-sm transition-all duration-300 hover:bg-slate-50 hover:border-green-200 hover:shadow-md active:scale-[0.98] cursor-default">
+                            <div className="flex-shrink-0">
+                                <CheckCircle className="w-6 h-6 text-green-500" strokeWidth={2.5} />
+                            </div>
+                            <span className="text-sm md:text-lg font-semibold text-slate-700">Beratung, Planung & Umsetzung aus einer Hand</span>
+                        </div>
+                    </div>
+
+                    {/* Partner Logos */}
+                    <div className="w-full max-w-md mb-8 px-2">
+                        <div className="flex flex-nowrap md:flex-wrap items-center justify-start md:justify-center gap-6 overflow-x-auto pb-4 md:pb-0 scrollbar-hide snap-x">
+                            <img src="https://solar-sed.de/wp-content/uploads/2025/06/viessman-e1750618168882.jpg" alt="Viessmann" className="h-6 md:h-8 w-auto object-contain transition-all duration-300 snap-center shrink-0" />
+                            <img src="https://solar-sed.de/wp-content/uploads/2025/03/solarfabrik.png" alt="Solar Fabrik" className="h-6 md:h-8 w-auto object-contain transition-all duration-300 snap-center shrink-0" />
+                            <img src="https://solar-sed.de/wp-content/uploads/2025/03/SMA.png" alt="SMA" className="h-6 md:h-8 w-auto object-contain transition-all duration-300 snap-center shrink-0" />
+                            <img src="https://solar-sed.de/wp-content/uploads/2025/03/senec.png" alt="SENEC" className="h-6 md:h-8 w-auto object-contain transition-all duration-300 snap-center shrink-0" />
+                            <img src="https://solar-sed.de/wp-content/uploads/2025/03/huawei.png" alt="Huawei" className="h-6 md:h-8 w-auto object-contain transition-all duration-300 snap-center shrink-0" />
+                            <img src="https://solar-sed.de/wp-content/uploads/2025/03/alpha.png" alt="Alpha ESS" className="h-6 md:h-8 w-auto object-contain transition-all duration-300 snap-center shrink-0" />
+                        </div>
+                    </div>
+
+                    {/* Google Reviews Badge */}
+                    <div className="flex flex-col items-center justify-center mb-6">
+                        <a
+                            href="https://www.google.com/maps/search/?api=1&query=SED+Solar+GmbH+Nürnberg"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-3 bg-white border border-gray-200 rounded-full px-5 py-2.5 shadow-sm hover:shadow hover:bg-gray-50 transition-all cursor-pointer mb-2"
+                        >
+                            <img src="/google.jpg" alt="Google" className="w-6 h-6 object-contain" />
+                            <span className="font-bold text-slate-700 text-sm md:text-base">4,9</span>
+                            <div className="flex gap-0.5">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                    <svg key={star} className="w-4 h-4 md:w-5 md:h-5 text-yellow-500 fill-current" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                    </svg>
+                                ))}
+                            </div>
+                            <span className="text-xs md:text-sm text-slate-500 font-medium whitespace-nowrap">(97)</span>
+                        </a>
+                        <p className="text-xs md:text-sm text-slate-400 font-medium">
+                            Standort Nürnberg · 4,9 Sterne bei Google
+                        </p>
+                    </div>
+                </div>
+            );
+
         case 1: // Building Type
             return (
                 <div>
                     <div className="text-center max-w-4xl mx-auto mb-8">
-                        {/* 1. Main Heading */}
-                        <h2 className="text-2xl md:text-4xl font-extrabold text-slate-900 mb-4 leading-tight tracking-tight">
-                            SED Solar – Ihr regionaler Fachbetrieb aus Nürnberg
-                        </h2>
-
-                        {/* Partner Logos Section */}
-                        <div className="mb-4 md:mb-6 text-center max-w-2xl mx-auto px-2">
-                            <div className="flex flex-wrap justify-center items-center gap-4 md:gap-6">
-                                <img src="https://solar-sed.de/wp-content/uploads/2025/06/viessman-e1750618168882.jpg" alt="Viessmann" className="h-9 md:h-11 w-auto object-contain transition-transform duration-300 hover:scale-105" />
-                                <img src="https://solar-sed.de/wp-content/uploads/2025/03/solarfabrik.png" alt="Solar Fabrik" className="h-9 md:h-11 w-auto object-contain transition-transform duration-300 hover:scale-105" />
-                                <img src="https://solar-sed.de/wp-content/uploads/2025/03/SMA.png" alt="SMA" className="h-9 md:h-11 w-auto object-contain transition-transform duration-300 hover:scale-105" />
-                                <img src="https://solar-sed.de/wp-content/uploads/2025/03/senec.png" alt="SENEC" className="h-9 md:h-11 w-auto object-contain transition-transform duration-300 hover:scale-105" />
-                                <img src="https://solar-sed.de/wp-content/uploads/2025/03/huawei.png" alt="Huawei" className="h-9 md:h-11 w-auto object-contain transition-transform duration-300 hover:scale-105" />
-                                <img src="https://solar-sed.de/wp-content/uploads/2025/03/alpha.png" alt="Alpha ESS" className="h-9 md:h-11 w-auto object-contain transition-transform duration-300 hover:scale-105" />
-                            </div>
-                        </div>
-
-                        {/* 3. Action Text */}
-                        <p className="text-xl md:text-2xl font-bold text-slate-800 mb-8">
-                            <span className="text-green-600">JETZT prüfen:</span> Lohnt sich eine Solaranlage für Ihr Haus in Nürnberg?
-                        </p>
-
-                        {/* 4. Premium Bullet Points */}
-                        <div className="flex flex-col gap-3 mb-10 mx-auto max-w-md text-left">
-                            <div className="flex items-center gap-4 p-3.5 bg-white border border-green-200 rounded-xl shadow-sm hover:border-green-400 hover:shadow-md transition-all">
-                                <div className="flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-full bg-green-500 text-white font-bold text-sm">✓</div>
-                                <span className="text-base md:text-lg font-semibold text-slate-700">Kostenlos & unverbindlich</span>
-                            </div>
-                            <div className="flex items-center gap-4 p-3.5 bg-white border border-green-200 rounded-xl shadow-sm hover:border-green-400 hover:shadow-md transition-all">
-                                <div className="flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-full bg-green-500 text-white font-bold text-sm">✓</div>
-                                <span className="text-base md:text-lg font-semibold text-slate-700">Persönlicher Ansprechpartner vor Ort</span>
-                            </div>
-                            <div className="flex items-center gap-4 p-3.5 bg-white border border-green-200 rounded-xl shadow-sm hover:border-green-400 hover:shadow-md transition-all">
-                                <div className="flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-full bg-green-500 text-white font-bold text-sm">✓</div>
-                                <span className="text-base md:text-lg font-semibold text-slate-700">Eigene Planung & Installation</span>
-                            </div>
-                        </div>
-
                         {/* Question for the cards */}
-                        <h3 className="text-xl md:text-2xl font-extrabold text-slate-800 mb-5">Welcher Haustyp ist es?</h3>
+                        <h3 className="text-2xl md:text-4xl font-extrabold text-slate-900 mb-5 leading-tight">Welcher Haustyp ist es?</h3>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                         <SelectionCard
@@ -228,18 +271,6 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
                             imageSrc="/nichtsicher.jpg"
                             className="!h-24 md:!h-auto !aspect-auto md:!aspect-video h-full"
                         />
-                    </div>
-                    {/* Google Reviews Badge */}
-                    <div className="flex justify-center mt-6 mb-2">
-                        <a
-                            href="https://www.google.com/maps/place/SED+-+Solar+GmbH/@49.4281327,11.02889,645m/data=!3m2!1e3!5s0x479f56c19737a815:0xe06d13f1060e3ad0!4m6!3m5!1s0x479f51b822ef58d9:0xe953a4a0425e563f!8m2!3d49.4281327!4d11.0314649!16s%2Fg%2F11txvmpyn7?entry=ttu&g_ep=EgoyMDI2MDIxOC4wIKXMDSoASAFQAw%3D%3D"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-3 bg-white border border-gray-200 rounded-full px-4 py-2 shadow-sm hover:shadow hover:bg-gray-50 transition-all"
-                        >
-                            <img src="/google.jpg" alt="Google" className="w-8 h-8 object-contain" />
-                            <img src="/stars.png" alt="Google Stars Rating" className="h-8 w-auto object-contain" />
-                        </a>
                     </div>
                 </div>
             );
@@ -407,11 +438,13 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
 
             return (
                 <div className="max-w-md mx-auto text-center">
-                    <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-6 md:mb-10 text-center leading-tight">
-                        Wie lautet Ihre Postleitzahl?
+                    <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-2 md:mb-4 text-center leading-tight">
+                        Prüfen Sie jetzt, ob wir in Ihrer Region tätig sind
                     </h2>
+                    <p className="text-lg md:text-xl text-gray-600 mb-6 md:mb-10 text-center">
+                        Bitte geben Sie Ihre Postleitzahl ein.
+                    </p>
                     <InputField
-                        label="Postleitzahl"
                         value={formData.zipCode}
                         onChange={(e) => updateField('zipCode', e.target.value)}
                         placeholder="90403"
@@ -545,9 +578,9 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
                         placeholder="max@beispiel.de"
                         error={emailError || undefined}
                     />
-                    <p className="text-sm text-gray-500 mt-2 mb-6 flex items-center gap-1.5">
-                        <CheckCircle className="w-4 h-4 text-green-600" />
-                        Ihre E-Mail verwenden wir ausschließlich zur Zusendung Ihres Angebots. Kein Spam.
+                    <p className="text-sm text-gray-500 mt-2 mb-6 flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
+                        <span>Ihre E-Mail verwenden wir ausschließlich zur Zusendung Ihres Angebots.</span>
                     </p>
                     <button
                         disabled={!canProceed() || !!emailError}
@@ -605,17 +638,50 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
         case 10: // Phone Only (Final Step)
             const phoneError = getValidationError('phone', formData.phone);
 
-            // Helper to handle input change: strip 0, prepend +49
+            // Helferfunktion für sichere und optisch schöne Phone-Eingaben
             const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-                let val = e.target.value.replace(/\D/g, ''); // Remove non-digits
-                if (val.startsWith('0')) {
-                    val = val.substring(1); // Strip leading zero
+                let val = e.target.value;
+
+                // Allow only digits and plus at the very beginning
+                let cleanVal = val.replace(/[^\d+]/g, '');
+
+                // Ensure '+' is only at the beginning
+                if (cleanVal.indexOf('+') > 0) {
+                    cleanVal = cleanVal.replace(/\+/g, '');
                 }
-                updateField('phone', '+49' + val);
+
+                // Handling explicit raw lengths (15 Max chars)
+                if (cleanVal.replace('+', '').length > 15) {
+                    cleanVal = cleanVal.slice(0, cleanVal.startsWith('+') ? 16 : 15);
+                }
+
+                updateField('phone', cleanVal);
             };
 
-            // Display value: remove +49 for the input field
-            const phoneDisplayValue = formData.phone.startsWith('+49') ? formData.phone.substring(3) : formData.phone;
+            // Display value: format numbers beautifully (e.g. +49 176 1234567 or 0176 1234567)
+            const formatPhoneDisplay = (phone: string) => {
+                let cleaned = phone.replace(/[^\d+]/g, ''); // Extract only digits & +
+
+                if (cleaned.startsWith('+49')) {
+                    // Format: +49 176 1234567
+                    let rest = cleaned.substring(3);
+                    if (rest.length > 0) {
+                        let areaCode = rest.substring(0, 3);
+                        let subscriber = rest.substring(3);
+                        return `+49 ${areaCode}${subscriber ? ' ' + subscriber : ''}`.trim();
+                    }
+                    return '+49';
+                } else if (cleaned.startsWith('0')) {
+                    // Format: 0176 1234567
+                    let areaCode = cleaned.substring(0, 4);
+                    let subscriber = cleaned.substring(4);
+                    return `${areaCode}${subscriber ? ' ' + subscriber : ''}`.trim();
+                }
+
+                return cleaned; // Raw Fallback
+            };
+
+            const phoneDisplayValue = formatPhoneDisplay(formData.phone);
 
             return (
                 <div className="max-w-md mx-auto">
@@ -632,7 +698,7 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
                         requiredIndicator={true}
                         value={phoneDisplayValue}
                         onChange={handlePhoneChange}
-                        placeholder="+49 151 12345678"
+                        placeholder="0176 1234567"
                         error={phoneError || undefined}
                     />
                     <button
@@ -658,7 +724,7 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
 };
 
 export const Funnel = () => {
-    const [step, setStep] = useState(1);
+    const [step, setStep] = useState(0);
     const [formData, setFormData] = useState<FunnelState>(INITIAL_STATE);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
@@ -783,9 +849,17 @@ export const Funnel = () => {
             case 9: // Contact Preference
                 return formData.contactPreference !== null;
             case 10: // Phone
-                return formData.phone.startsWith('+49') && formData.phone.length >= 11;
-            case 99: // Renter submit
-                return formData.lastName.length > 2 && formData.phone.startsWith('+49') && formData.phone.length >= 11;
+            case 99: // Renter submit (also uses phone)
+                const phoneOnlyDigits = formData.phone.replace(/\D/g, ''); // Only numbers without +
+                const isRepeatedChars = /^(.)\1+$/.test(phoneOnlyDigits); // E.g. "33333333"
+
+                // Needs to start with +49 or 0, have realistic length (between 7 and 15 digits), and not be spam
+                let isValidFormat = (formData.phone.startsWith('+49') || formData.phone.startsWith('0'));
+
+                // If it's pure logic, let's validate against the raw digit length
+                let isValidLength = phoneOnlyDigits.length >= 7 && phoneOnlyDigits.length <= 15;
+
+                return isValidFormat && isValidLength && !isRepeatedChars;
             default: return true;
         }
     };
@@ -801,24 +875,37 @@ export const Funnel = () => {
                     {/* Content Area */}
                     <div className="px-4 md:px-8 pb-6 md:pb-10 pt-6 md:pt-8 min-h-[400px] flex flex-col">
                         {/* Horizontal Header: Logo + Progress */}
-                        <div className="flex items-center gap-6 mb-8">
-                            {/* Logo */}
-                            <img src="/logo1.png" alt="Solar Logo" className="h-20 w-auto object-contain flex-shrink-0" />
+                        {step !== 0 && (
+                            <div className="flex items-center gap-6 mb-8">
+                                {/* Logo */}
+                                <img src="/logo1.png" alt="Solar Logo" className="h-20 w-auto object-contain flex-shrink-0" />
 
-                            {/* Progress Bar (Fills remaining space) */}
-                            <div className="flex-1">
-                                {step !== 99 && (
-                                    <div className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2 text-right">
-                                        Schritt {step} von {TOTAL_STEPS}
-                                    </div>
-                                )}
-                                <ProgressBar
-                                    currentStep={step === 99 ? 4 : step}
-                                    totalSteps={TOTAL_STEPS}
-                                    className="h-2 rounded-full"
-                                />
+                                {/* Progress Bar (Fills remaining space) */}
+                                <div className="flex-1">
+                                    {step !== 99 && (
+                                        <div className="text-sm font-bold text-slate-600 mb-2 text-right tracking-tight">
+                                            {/* Custom percentage mapping to make it uneven/psychologically realistic as requested */}
+                                            {step === 1 ? '11 %' :
+                                                step === 2 ? '23 %' :
+                                                    step === 3 ? '34 %' :
+                                                        step === 4 ? '46 %' :
+                                                            step === 5 ? '58 %' :
+                                                                step === 6 ? '67 %' :
+                                                                    step === 7 ? '78 %' :
+                                                                        step === 8 ? '89 %' :
+                                                                            step === 9 ? '94 %' :
+                                                                                step === 10 ? '99 %' :
+                                                                                    `${Math.round((step / TOTAL_STEPS) * 100)} %`}
+                                        </div>
+                                    )}
+                                    <ProgressBar
+                                        currentStep={step === 99 ? 4 : step}
+                                        totalSteps={TOTAL_STEPS}
+                                        className="h-2 rounded-full"
+                                    />
+                                </div>
                             </div>
-                        </div>
+                        )}
                         <AnimatePresence mode="wait" initial={false}>
                             <motion.div
                                 key={step}
@@ -859,7 +946,21 @@ export const Funnel = () => {
 
                 {/* Trust Badges Footer */}
                 {/* Trust Badges & Legal Footer */}
-                <div className="mt-12 flex flex-col items-center gap-4 text-gray-400 grayscale opacity-80">
+                <div className="mt-8 md:mt-12 flex flex-col items-center gap-4 text-gray-400 grayscale opacity-80">
+                    {/* Floating Google Review in Footer (only visible when not on Pre-Page to avoid duplication) */}
+                    {step !== 0 && (
+                        <a
+                            href="https://www.google.com/maps/search/?api=1&query=SED+Solar+GmbH+Nürnberg"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 hover:text-gray-600 hover:grayscale-0 transition-all duration-300 mb-2"
+                        >
+                            <img src="/google.jpg" alt="Google" className="w-4 h-4 object-contain" />
+                            <span className="text-[11px] font-bold tracking-wide">4,9 von 5 Sternen</span>
+                            <span className="text-[10px] hidden md:inline">(97 Google-Bewertungen)</span>
+                        </a>
+                    )}
+
                     <div className="flex items-center gap-2 text-xs font-semibold tracking-wide">
                         <CheckCircle size={14} className="text-green-600" /> Kostenlos & Unverbindlich
                         <span className="mx-2">•</span>

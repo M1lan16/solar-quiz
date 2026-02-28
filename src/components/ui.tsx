@@ -88,7 +88,7 @@ export const SelectionCard: React.FC<SelectionCardProps> = ({ label, selected, o
 };
 
 interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
-    label: string;
+    label?: string;
     error?: string;
     prefix?: string;
     requiredIndicator?: boolean;
@@ -97,9 +97,11 @@ interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
 export const InputField: React.FC<InputFieldProps> = ({ label, error, prefix, requiredIndicator, className, ...props }) => {
     return (
         <div className="w-full mb-6">
-            <label className="block text-base font-bold text-gray-800 mb-3 uppercase tracking-wider">
-                {label} {requiredIndicator && <span className="text-red-500">*</span>}
-            </label>
+            {label && (
+                <label className="block text-base font-bold text-gray-800 mb-3 uppercase tracking-wider">
+                    {label} {requiredIndicator && <span className="text-red-500">*</span>}
+                </label>
+            )}
             <div className="relative group">
                 {prefix && (
                     <div className="absolute left-0 top-0 bottom-0 px-5 bg-gray-50 border-r border-gray-400 rounded-l-lg flex items-center text-gray-600 font-bold z-10 text-lg">
