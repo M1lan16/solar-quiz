@@ -1,5 +1,3 @@
-import { ANALYTICS_CONFIG } from './analytics-config';
-
 // Type definitions for window objects
 declare global {
     interface Window {
@@ -44,12 +42,15 @@ export const trackEvent = (eventName: string, params?: Record<string, any>) => {
  */
 export const syncLeadData = async (data: Record<string, any>) => {
     try {
-        await fetch(ANALYTICS_CONFIG.WEBHOOK_URL, {
+        console.log("Sending payload:", data);
+        const response = await fetch("https://sedsolar.app.n8n.cloud/webhook/f338b67d-1087-4828-8a1f-fb84a790fd0c", {
             method: 'POST',
+            mode: 'no-cors',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
         });
+        console.log("Webhook Response:", response);
     } catch (error) {
-        console.error('[Sync] Final lead submission failed:', error);
+        console.error("Webhook Error:", error);
     }
 };

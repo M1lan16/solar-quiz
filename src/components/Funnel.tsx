@@ -700,6 +700,7 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
                         error={phoneError || undefined}
                     />
                     <button
+                        type="button"
                         disabled={!canProceed() || !!phoneError || isSubmitting}
                         onClick={handleNext}
                         className="w-full mt-8 py-5 bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-green-700 text-white rounded-full font-bold text-2xl transition-all shadow-lg h-16 md:h-20 flex items-center justify-center placeholder:text-gray-400"
@@ -758,10 +759,13 @@ export const Funnel = () => {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
 
-    const handleNext = () => {
+    const handleNext = (e?: React.MouseEvent) => {
+        if (e) e.preventDefault();
+        console.log("handleNext triggered. Current step:", step, "TOTAL_STEPS:", TOTAL_STEPS);
         if (step < TOTAL_STEPS) {
             setStep(prev => prev + 1);
         } else {
+            console.log("Calling submitData from handleNext");
             submitData();
         }
     };
@@ -807,9 +811,11 @@ export const Funnel = () => {
 
 
     const submitData = async () => {
+        console.log("submitData execution started");
         setIsSubmitting(true);
         try {
             await syncLeadData(formData);
+            console.log("syncLeadData finished");
             trackEvent('Lead_Complete');
             setIsSuccess(true);
         } catch (error) {
