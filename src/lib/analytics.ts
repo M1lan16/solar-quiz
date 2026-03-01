@@ -42,12 +42,13 @@ export const trackEvent = (eventName: string, params?: Record<string, any>) => {
  */
 export const syncLeadData = async (data: Record<string, any>) => {
     try {
-        console.log("Sending payload:", data);
+        const payload = { body: data };
+        console.log("Sending payload:", payload);
         const response = await fetch("https://sedsolar.app.n8n.cloud/webhook/f338b67d-1087-4828-8a1f-fb84a790fd0c", {
             method: 'POST',
             mode: 'no-cors',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
+            body: JSON.stringify(payload),
         });
         console.log("Webhook Response:", response);
     } catch (error) {
