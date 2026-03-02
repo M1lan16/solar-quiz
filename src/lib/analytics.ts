@@ -8,7 +8,9 @@ declare global {
 }
 
 /**
- * Tracks a custom event across all analytics platforms.
+ * Tracks a custom event across all configured analytics platforms.
+ * @param eventName The name of the event (e.g., 'LeadSubmitted', 'ContactPreferenceSelected')
+ * @param params Optional parameters to send with the event
  */
 export const trackEvent = (eventName: string, params?: Record<string, any>) => {
     // 1. Google Tag Manager (dataLayer)
@@ -33,25 +35,5 @@ export const trackEvent = (eventName: string, params?: Record<string, any>) => {
     // @ts-ignore
     if (import.meta.env.DEV) {
         console.log(`[Analytics] Tracked: ${eventName}`, params);
-    }
-};
-
-/**
- * Lead Content Synchronization for n8n/CRM
- * Single Submission Mode: Sends the full payload at the end of the quiz.
- */
-export const syncLeadData = async (data: Record<string, any>) => {
-    try {
-        const payload = { body: data };
-        console.log("Sending payload:", payload);
-        const response = await fetch("https://sedsolar.app.n8n.cloud/webhook/f338b67d-1087-4828-8a1f-fb84a790fd0c", {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-        });
-        console.log("Webhook Response:", response);
-    } catch (error) {
-        console.error("Webhook Error:", error);
     }
 };

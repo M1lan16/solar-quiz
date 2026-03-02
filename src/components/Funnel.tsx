@@ -137,6 +137,14 @@ const getValidationError = (field: keyof FunnelState, value: string): string | n
 };
 
 const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSelection, handleOwnerSelect, canProceed, isSubmitting, submitData, loadingPhase }: any) => {
+    const [showZipHint, setShowZipHint] = React.useState(false);
+    const [showConsentHint, setShowConsentHint] = React.useState(false);
+
+    React.useEffect(() => {
+        setShowZipHint(false);
+        setShowConsentHint(false);
+    }, [step]);
+
     switch (step) {
 
 
@@ -169,18 +177,26 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
                     </p>
 
                     <div className="flex flex-col gap-3 mb-8 text-left w-full max-w-md mx-auto">
-                        <div className="flex items-center gap-4 p-3.5 bg-white border border-slate-100 rounded-2xl shadow-sm transition-all duration-300 hover:bg-slate-50 hover:border-green-200 hover:shadow-md active:scale-[0.98] cursor-default">
+                        <button
+                            onClick={handleNext}
+                            type="button"
+                            className="flex items-center gap-4 p-3.5 bg-white border border-slate-100 rounded-2xl shadow-sm transition-all duration-300 hover:bg-slate-50 hover:border-green-300 hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98] cursor-pointer w-full text-left"
+                        >
                             <div className="flex-shrink-0">
                                 <CheckCircle className="w-6 h-6 text-green-500" strokeWidth={2.5} />
                             </div>
                             <span className="text-sm md:text-lg font-semibold text-slate-700">Regionaler Fachbetrieb aus Nürnberg</span>
-                        </div>
-                        <div className="flex items-center gap-4 p-3.5 bg-white border border-slate-100 rounded-2xl shadow-sm transition-all duration-300 hover:bg-slate-50 hover:border-green-200 hover:shadow-md active:scale-[0.98] cursor-default">
+                        </button>
+                        <button
+                            onClick={handleNext}
+                            type="button"
+                            className="flex items-center gap-4 p-3.5 bg-white border border-slate-100 rounded-2xl shadow-sm transition-all duration-300 hover:bg-slate-50 hover:border-green-300 hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98] cursor-pointer w-full text-left"
+                        >
                             <div className="flex-shrink-0">
                                 <CheckCircle className="w-6 h-6 text-green-500" strokeWidth={2.5} />
                             </div>
                             <span className="text-sm md:text-lg font-semibold text-slate-700">Beratung, Planung & Umsetzung aus einer Hand</span>
-                        </div>
+                        </button>
                     </div>
 
                     {/* Partner Logos */}
@@ -417,24 +433,53 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
                     <div className="flex items-start gap-3 mt-4 mb-2 px-2">
                         <input
                             type="checkbox"
-                            id="privacy"
+                            id="privacy-99"
                             required
                             checked={formData.privacyPolicyAccepted}
-                            onChange={(e) => updateField('privacyPolicyAccepted', e.target.checked)}
-                            className="mt-1 w-5 h-5 text-green-600 rounded border-gray-300 focus:ring-green-500 flex-shrink-0 cursor-pointer"
+                            onChange={(e) => {
+                                setShowConsentHint(false);
+                                updateField('privacyPolicyAccepted', e.target.checked);
+                            }}
+                            className={`mt-1 w-5 h-5 text-green-600 rounded border-gray-300 focus:ring-green-500 flex-shrink-0 cursor-pointer transition-all ${showConsentHint && !formData.privacyPolicyAccepted ? 'ring-2 ring-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]' : ''}`}
                         />
-                        <label htmlFor="privacy" className="text-xs text-left text-gray-600 cursor-pointer">
+                        <label htmlFor="privacy-99" className="text-xs text-left text-gray-600 cursor-pointer">
                             Ich stimme zu, dass meine Angaben (Name, E-Mail, Telefon) zur Bearbeitung meiner Anfrage gemäß der <a href="https://solar-sed.de/impressum-datenschutz/" target="_blank" className="underline hover:text-green-600">Datenschutzerklärung</a> verwendet werden dürfen.
                         </label>
                     </div>
 
-                    <button
-                        onClick={submitData}
-                        disabled={!canProceed() || isSubmitting}
-                        className="w-full mt-6 py-4 bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-green-700 text-white rounded-full font-bold text-xl transition-all shadow-lg"
+                    {showConsentHint && !formData.privacyPolicyAccepted && (
+                        <p className="text-red-500 text-sm font-bold mt-1 px-2 animate-bounce flex items-center gap-1.5 text-left">
+                            • Bitte bestätigen Sie die Datenschutzerklärung, um fortzufahren.
+                        </p>
+                    )}
+
+                    <div
+                        className="w-full mt-6"
+                        onClickCapture={(e) => {
+                            if (!formData.privacyPolicyAccepted) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setShowConsentHint(true);
+                            }
+                        }}
                     >
-                        Rückruf anfordern
-                    </button>
+                        <button
+                            type="button"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                if (!formData.privacyPolicyAccepted) {
+                                    setShowConsentHint(true);
+                                    return;
+                                }
+                                if (!canProceed() || isSubmitting) return;
+                                submitData();
+                            }}
+                            disabled={!canProceed() || isSubmitting}
+                            className={`w-full py-4 rounded-full font-bold text-xl transition-all shadow-lg pointer-events-auto ${(!canProceed() || isSubmitting) ? "bg-green-600 opacity-50 cursor-not-allowed text-white" : "bg-green-600 hover:bg-green-700 text-white"}`}
+                        >
+                            Rückruf anfordern
+                        </button>
+                    </div>
                     <p className="text-center text-xs text-gray-400 mt-4">
                         Ihre Daten werden streng vertraulich behandelt (DSGVO-konform).
                     </p>
@@ -445,7 +490,7 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
             const isZipLengthValid = /^\d{5}$/.test(formData.zipCode);
             const isRegionValid = ['90', '91', '92', '96'].some(p => formData.zipCode.startsWith(p));
 
-            let zipError;
+            let zipError: string | undefined;
             if (formData.zipCode && !isZipLengthValid) {
                 zipError = "Bitte geben Sie eine gültige PLZ ein (5 Ziffern).";
             } else if (formData.zipCode && isZipLengthValid && !isRegionValid) {
@@ -460,22 +505,56 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
                     <p className="text-lg md:text-xl text-gray-600 mb-6 md:mb-10 text-center">
                         Bitte geben Sie Ihre Postleitzahl ein.
                     </p>
-                    <InputField
-                        value={formData.zipCode}
-                        onChange={(e) => updateField('zipCode', e.target.value)}
-                        placeholder="90403"
-                        type="tel"
-                        maxLength={5}
-                        autoFocus
-                        error={zipError}
-                    />
-                    <button
-                        disabled={!canProceed() || !!zipError}
-                        onClick={handleNext}
-                        className="w-full mt-8 py-5 bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-green-700 text-white rounded-full font-bold text-2xl transition-all shadow-lg h-16 md:h-20 flex items-center justify-center"
+                    <div className={`transition-all duration-300 rounded-lg ${showZipHint && formData.zipCode.length !== 5 ? "ring-2 ring-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)] p-1 -m-1" : ""}`}>
+                        <InputField
+                            value={formData.zipCode}
+                            onChange={(e) => {
+                                setShowZipHint(false);
+                                const val = e.target.value.replace(/\D/g, '').slice(0, 5);
+                                updateField('zipCode', val);
+                            }}
+                            placeholder="90403"
+                            type="text"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
+                            maxLength={5}
+                            autoFocus
+                            error={zipError}
+                        />
+                    </div>
+                    {showZipHint && formData.zipCode.length !== 5 && (
+                        <p className="text-red-500 text-sm font-bold mt-2 animate-bounce flex items-center justify-center gap-1.5">
+                            • Bitte geben Sie eine gültige 5-stellige PLZ ein.
+                        </p>
+                    )}
+                    <div
+                        className="w-full mt-8"
+                        onClickCapture={(e) => {
+                            if (formData.zipCode.length !== 5 || !canProceed() || !!zipError) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setShowZipHint(true);
+                            }
+                        }}
                     >
-                        Weiter
-                    </button>
+                        <button
+                            type="button"
+                            disabled={formData.zipCode.length !== 5 || !canProceed() || !!zipError}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                if (formData.zipCode.length !== 5) {
+                                    setShowZipHint(true);
+                                    return;
+                                }
+                                if (!canProceed() || !!zipError) return;
+                                (e.currentTarget as HTMLButtonElement).disabled = true;
+                                handleNext();
+                            }}
+                            className={`w-full py-5 rounded-full font-bold text-2xl transition-all shadow-lg h-16 md:h-20 flex items-center justify-center pointer-events-auto ${(!canProceed() || !!zipError || formData.zipCode.length !== 5) ? "bg-green-600 opacity-50 cursor-not-allowed text-white" : "bg-green-600 hover:bg-green-700 text-white"}`}
+                        >
+                            Weiter
+                        </button>
+                    </div>
                     <p className="text-center text-xs text-gray-400 mt-4">
                         Ihre Daten werden streng vertraulich behandelt (DSGVO-konform).
                     </p>
@@ -724,25 +803,54 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
                             id="privacy-10"
                             required
                             checked={formData.privacyPolicyAccepted}
-                            onChange={(e) => updateField('privacyPolicyAccepted', e.target.checked)}
-                            className="mt-1 w-5 h-5 text-green-600 rounded border-gray-300 focus:ring-green-500 flex-shrink-0 cursor-pointer"
+                            onChange={(e) => {
+                                setShowConsentHint(false);
+                                updateField('privacyPolicyAccepted', e.target.checked);
+                            }}
+                            className={`mt-1 w-5 h-5 text-green-600 rounded border-gray-300 focus:ring-green-500 flex-shrink-0 cursor-pointer transition-all ${showConsentHint && !formData.privacyPolicyAccepted ? 'ring-2 ring-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]' : ''}`}
                         />
                         <label htmlFor="privacy-10" className="text-xs text-left text-gray-600 cursor-pointer">
                             Ich stimme zu, dass meine Angaben (Name, E-Mail, Telefon) zur Bearbeitung meiner Anfrage gemäß der <a href="https://solar-sed.de/impressum-datenschutz/" target="_blank" className="underline hover:text-green-600">Datenschutzerklärung</a> verwendet werden dürfen.
                         </label>
                     </div>
 
-                    <button
-                        disabled={!canProceed() || !!phoneError || isSubmitting}
-                        onClick={handleNext}
-                        className="w-full mt-8 py-5 bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-green-700 text-white rounded-full font-bold text-2xl transition-all shadow-lg h-16 md:h-20 flex items-center justify-center placeholder:text-gray-400"
+                    {showConsentHint && !formData.privacyPolicyAccepted && (
+                        <p className="text-red-500 text-sm font-bold mt-1 px-2 animate-bounce flex items-center gap-1.5 text-left">
+                            • Bitte bestätigen Sie die Datenschutzerklärung, um fortzufahren.
+                        </p>
+                    )}
+
+                    <div
+                        className="w-full mt-8"
+                        onClickCapture={(e) => {
+                            if (!formData.privacyPolicyAccepted) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setShowConsentHint(true);
+                            }
+                        }}
                     >
-                        {isSubmitting ? (
-                            <><Loader2 className="animate-spin mr-3" /> Angebot wird erstellt...</>
-                        ) : (
-                            'Kostenlos anfragen'
-                        )}
-                    </button>
+                        <button
+                            type="button"
+                            disabled={!canProceed() || !!phoneError || isSubmitting}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                if (!formData.privacyPolicyAccepted) {
+                                    setShowConsentHint(true);
+                                    return;
+                                }
+                                if (!canProceed() || !!phoneError || isSubmitting) return;
+                                handleNext();
+                            }}
+                            className={`w-full py-5 rounded-full font-bold text-2xl transition-all shadow-lg h-16 md:h-20 flex items-center justify-center placeholder:text-gray-400 pointer-events-auto ${(!canProceed() || !!phoneError || isSubmitting) ? "bg-green-600 opacity-50 cursor-not-allowed text-white" : "bg-green-600 hover:bg-green-700 text-white"}`}
+                        >
+                            {isSubmitting ? (
+                                <><Loader2 className="animate-spin mr-3" /> Angebot wird erstellt...</>
+                            ) : (
+                                'Kostenlos anfragen'
+                            )}
+                        </button>
+                    </div>
                     <p className="text-center text-xs text-gray-400 mt-4">
                         Ihre Daten werden streng vertraulich behandelt (DSGVO-konform).
                     </p>
@@ -791,6 +899,13 @@ export const Funnel = () => {
     };
 
     const handleNext = () => {
+        // Global safeguard: Cannot skip step 5 without a valid 5-digit ZIP
+        if (step === 5) {
+            const isZipLengthValid = /^\d{5}$/.test(formData.zipCode);
+            const isRegionValid = ['90', '91', '92', '96'].some(p => formData.zipCode.startsWith(p));
+            if (!isZipLengthValid || !isRegionValid) return;
+        }
+
         if (step < TOTAL_STEPS) {
             setStep(prev => prev + 1);
         } else {
@@ -804,15 +919,20 @@ export const Funnel = () => {
         }
     };
 
+    const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+
     // Special handler for Owner check with delay
     const handleOwnerSelect = (val: boolean) => {
+        if (timeoutRef.current) return;
+
         if (val === true) {
             trackEvent('Qualified_Lead_Owner');
         } else {
             trackEvent('Unqualified_Renter');
         }
 
-        setTimeout(() => {
+        timeoutRef.current = setTimeout(() => {
+            timeoutRef.current = null;
             updateField('isOwner', val);
             if (val === false) {
                 // Renter -> Lead Capture
@@ -827,11 +947,14 @@ export const Funnel = () => {
     };
 
     const handleDelayedSelection = (field: keyof FunnelState, value: any) => {
+        if (timeoutRef.current) return;
+
         // 1. Immediate visual update
         updateField(field, value);
 
         // 2. Delayed navigation
-        setTimeout(() => {
+        timeoutRef.current = setTimeout(() => {
+            timeoutRef.current = null;
             handleNext();
         }, 600);
     };
