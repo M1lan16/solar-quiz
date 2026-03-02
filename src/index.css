@@ -12,3 +12,36 @@
 .step-transition {
   transition: all 0.3s ease-in-out;
 }
+
+@keyframes cta-pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.4);
+  }
+
+  70% {
+    transform: scale(1.02);
+    box-shadow: 0 0 0 12px rgba(22, 163, 74, 0);
+  }
+
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(22, 163, 74, 0);
+  }
+}
+
+.main-cta-btn {
+  animation: cta-pulse 2.5s infinite;
+}
+
+.main-cta-btn:hover {
+  animation: none;
+  /* Stop pulsing on hover so scale transition handles it smoothly */
+  transform: scale(1.04);
+  box-shadow: 0 10px 20px rgba(22, 163, 74, 0.3);
+}
+
+.main-cta-btn:active {
+  transform: scale(0.96);
+  box-shadow: 0 4px 8px rgba(22, 163, 74, 0.2);
+}

@@ -167,7 +167,7 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
 
                     <button
                         onClick={handleNext}
-                        className="w-full max-w-md py-4 md:py-5 px-4 bg-green-600 hover:bg-green-700 text-white rounded-full font-bold text-[17px] sm:text-lg md:text-2xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 mb-2"
+                        className="main-cta-btn w-full max-w-md py-4 md:py-5 px-4 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white rounded-full font-bold text-[17px] sm:text-lg md:text-2xl transition-all duration-300 mb-2"
                     >
                         Persönliche Einschätzung starten
                     </button>
