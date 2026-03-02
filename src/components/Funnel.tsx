@@ -7,7 +7,7 @@ import { trackEvent } from '../lib/analytics';
 
 const TOTAL_STEPS = 10;
 // Placeholder n8n webhook
-const WEBHOOK_URL = 'https://sedsolar.app.n8n.cloud/webhook/58152cdc-7aa2-4492-abe4-f7ec9f852625';
+const WEBHOOK_URL = 'https://sedsolar.app.n8n.cloud/webhook-test/58152cdc-7aa2-4492-abe4-f7ec9f852625';
 
 // --- Sub-components (Screens) ---
 
@@ -413,9 +413,25 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
                             placeholder="170 12345678"
                         />
                     </div>
+
+                    <div className="flex items-start gap-3 mt-4 mb-2 px-2">
+                        <input
+                            type="checkbox"
+                            id="privacy"
+                            required
+                            checked={formData.privacyPolicyAccepted}
+                            onChange={(e) => updateField('privacyPolicyAccepted', e.target.checked)}
+                            className="mt-1 w-5 h-5 text-green-600 rounded border-gray-300 focus:ring-green-500 flex-shrink-0 cursor-pointer"
+                        />
+                        <label htmlFor="privacy" className="text-xs text-left text-gray-600 cursor-pointer">
+                            Ich stimme zu, dass meine Angaben (Name, E-Mail, Telefon) zur Bearbeitung meiner Anfrage gemäß der <a href="https://solar-sed.de/impressum-datenschutz/" target="_blank" className="underline hover:text-green-600">Datenschutzerklärung</a> verwendet werden dürfen.
+                        </label>
+                    </div>
+
                     <button
                         onClick={submitData}
-                        className="w-full mt-6 py-4 bg-green-600 hover:bg-green-700 text-white rounded-full font-bold text-xl transition-all shadow-lg"
+                        disabled={!canProceed() || isSubmitting}
+                        className="w-full mt-6 py-4 bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-green-700 text-white rounded-full font-bold text-xl transition-all shadow-lg"
                     >
                         Rückruf anfordern
                     </button>
@@ -701,6 +717,21 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
                         placeholder="0176 1234567"
                         error={phoneError || undefined}
                     />
+
+                    <div className="flex items-start gap-3 mt-6 px-2">
+                        <input
+                            type="checkbox"
+                            id="privacy-10"
+                            required
+                            checked={formData.privacyPolicyAccepted}
+                            onChange={(e) => updateField('privacyPolicyAccepted', e.target.checked)}
+                            className="mt-1 w-5 h-5 text-green-600 rounded border-gray-300 focus:ring-green-500 flex-shrink-0 cursor-pointer"
+                        />
+                        <label htmlFor="privacy-10" className="text-xs text-left text-gray-600 cursor-pointer">
+                            Ich stimme zu, dass meine Angaben (Name, E-Mail, Telefon) zur Bearbeitung meiner Anfrage gemäß der <a href="https://solar-sed.de/impressum-datenschutz/" target="_blank" className="underline hover:text-green-600">Datenschutzerklärung</a> verwendet werden dürfen.
+                        </label>
+                    </div>
+
                     <button
                         disabled={!canProceed() || !!phoneError || isSubmitting}
                         onClick={handleNext}
@@ -855,7 +886,7 @@ export const Funnel = () => {
                 // If it's pure logic, let's validate against the raw digit length
                 let isValidLength = phoneOnlyDigits.length >= 7 && phoneOnlyDigits.length <= 15;
 
-                return isValidFormat && isValidLength && !isRepeatedChars;
+                return isValidFormat && isValidLength && !isRepeatedChars && formData.privacyPolicyAccepted === true;
             default: return true;
         }
     };

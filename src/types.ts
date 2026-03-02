@@ -15,6 +15,7 @@ export interface FunnelState {
     email: string;
     phone: string;
     contactPreference: ContactPreference | null;
+    privacyPolicyAccepted: boolean;
 }
 
 export const INITIAL_STATE: FunnelState = {
@@ -28,4 +29,5 @@ export const INITIAL_STATE: FunnelState = {
     email: '',
     phone: '',
     contactPreference: null,
+    privacyPolicyAccepted: false,
 };
