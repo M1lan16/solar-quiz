@@ -453,33 +453,22 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
                         </p>
                     )}
 
-                    <div
-                        className="w-full mt-6"
-                        onClickCapture={(e) => {
+                    <button
+                        type="button"
+                        onClick={(e) => {
+                            e.preventDefault();
                             if (!formData.privacyPolicyAccepted) {
-                                e.preventDefault();
-                                e.stopPropagation();
                                 setShowConsentHint(true);
+                                return;
                             }
+                            if (!canProceed() || isSubmitting) return;
+                            submitData();
                         }}
+                        disabled={!canProceed() || isSubmitting}
+                        className={`w-full mt-6 py-4 rounded-full font-bold text-xl transition-all shadow-lg pointer-events-auto ${(!canProceed() || isSubmitting) ? "bg-green-600 opacity-50 cursor-not-allowed text-white" : "bg-green-600 hover:bg-green-700 text-white"}`}
                     >
-                        <button
-                            type="button"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                if (!formData.privacyPolicyAccepted) {
-                                    setShowConsentHint(true);
-                                    return;
-                                }
-                                if (!canProceed() || isSubmitting) return;
-                                submitData();
-                            }}
-                            disabled={!canProceed() || isSubmitting}
-                            className={`w-full py-4 rounded-full font-bold text-xl transition-all shadow-lg pointer-events-auto ${(!canProceed() || isSubmitting) ? "bg-green-600 opacity-50 cursor-not-allowed text-white" : "bg-green-600 hover:bg-green-700 text-white"}`}
-                        >
-                            Rückruf anfordern
-                        </button>
-                    </div>
+                        Rückruf anfordern
+                    </button>
                     <p className="text-center text-xs text-gray-400 mt-4">
                         Ihre Daten werden streng vertraulich behandelt (DSGVO-konform).
                     </p>
@@ -820,37 +809,26 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
                         </p>
                     )}
 
-                    <div
-                        className="w-full mt-8"
-                        onClickCapture={(e) => {
+                    <button
+                        type="button"
+                        disabled={!canProceed() || !!phoneError || isSubmitting}
+                        onClick={(e) => {
+                            e.preventDefault();
                             if (!formData.privacyPolicyAccepted) {
-                                e.preventDefault();
-                                e.stopPropagation();
                                 setShowConsentHint(true);
+                                return;
                             }
+                            if (!canProceed() || !!phoneError || isSubmitting) return;
+                            handleNext();
                         }}
+                        className={`w-full mt-8 py-5 rounded-full font-bold text-2xl transition-all shadow-lg h-16 md:h-20 flex items-center justify-center placeholder:text-gray-400 pointer-events-auto ${(!canProceed() || !!phoneError || isSubmitting) ? "bg-green-600 opacity-50 cursor-not-allowed text-white" : "bg-green-600 hover:bg-green-700 text-white"}`}
                     >
-                        <button
-                            type="button"
-                            disabled={!canProceed() || !!phoneError || isSubmitting}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                if (!formData.privacyPolicyAccepted) {
-                                    setShowConsentHint(true);
-                                    return;
-                                }
-                                if (!canProceed() || !!phoneError || isSubmitting) return;
-                                handleNext();
-                            }}
-                            className={`w-full py-5 rounded-full font-bold text-2xl transition-all shadow-lg h-16 md:h-20 flex items-center justify-center placeholder:text-gray-400 pointer-events-auto ${(!canProceed() || !!phoneError || isSubmitting) ? "bg-green-600 opacity-50 cursor-not-allowed text-white" : "bg-green-600 hover:bg-green-700 text-white"}`}
-                        >
-                            {isSubmitting ? (
-                                <><Loader2 className="animate-spin mr-3" /> Angebot wird erstellt...</>
-                            ) : (
-                                'Kostenlos anfragen'
-                            )}
-                        </button>
-                    </div>
+                        {isSubmitting ? (
+                            <><Loader2 className="animate-spin mr-3" /> Angebot wird erstellt...</>
+                        ) : (
+                            'Kostenlos anfragen'
+                        )}
+                    </button>
                     <p className="text-center text-xs text-gray-400 mt-4">
                         Ihre Daten werden streng vertraulich behandelt (DSGVO-konform).
                     </p>
@@ -1009,7 +987,7 @@ export const Funnel = () => {
                 // If it's pure logic, let's validate against the raw digit length
                 let isValidLength = phoneOnlyDigits.length >= 7 && phoneOnlyDigits.length <= 15;
 
-                return isValidFormat && isValidLength && !isRepeatedChars && formData.privacyPolicyAccepted === true;
+                return isValidFormat && isValidLength && !isRepeatedChars;
             default: return true;
         }
     };
