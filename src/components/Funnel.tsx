@@ -810,19 +810,14 @@ export const Funnel = () => {
     const submitData = async () => {
         setIsSubmitting(true);
         try {
-            const response = await fetch(WEBHOOK_URL, {
+            await fetch(WEBHOOK_URL, {
                 method: 'POST',
-                mode: 'cors',
+                mode: 'no-cors',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(formData),
             });
-
-            // If opaque response (CORS blocked but request sent) or successful, proceed.
-            if (!response.ok && response.status !== 0 && response.type !== 'opaque') {
-                throw new Error('Network response was not ok');
-            }
 
             trackEvent('Lead_Complete');
             setIsSuccess(true);
