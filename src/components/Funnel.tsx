@@ -810,14 +810,13 @@ export const Funnel = () => {
     const submitData = async () => {
         setIsSubmitting(true);
         try {
-            const payload = { body: formData };
             await fetch(WEBHOOK_URL, {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(payload),
+                body: JSON.stringify(formData),
             });
 
             trackEvent('Lead_Complete');
