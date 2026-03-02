@@ -3,9 +3,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, Loader2, ThumbsUp, ThumbsDown, HelpCircle, Sun, SunMoon, Scale } from 'lucide-react';
 import { ProgressBar, SelectionCard, InputField } from './ui';
 import { FunnelState, INITIAL_STATE } from '../types';
-import { trackEvent, syncLeadData } from '../lib/analytics';
+import { trackEvent } from '../lib/analytics';
 
 const TOTAL_STEPS = 10;
+// Placeholder n8n webhook
+const WEBHOOK_URL = 'https://sedsolar.app.n8n.cloud/webhook-test/58152cdc-7aa2-4492-abe4-f7ec9f852625';
 
 // --- Sub-components (Screens) ---
 
@@ -700,7 +702,6 @@ const StepContent = ({ step, formData, updateField, handleNext, handleDelayedSel
                         error={phoneError || undefined}
                     />
                     <button
-                        type="button"
                         disabled={!canProceed() || !!phoneError || isSubmitting}
                         onClick={handleNext}
                         className="w-full mt-8 py-5 bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-green-700 text-white rounded-full font-bold text-2xl transition-all shadow-lg h-16 md:h-20 flex items-center justify-center placeholder:text-gray-400"
@@ -735,7 +736,6 @@ export const Funnel = () => {
         trackEvent('StepView', { step });
     }, [step]);
 
-
     // Loading screen logic for Step 6
     useEffect(() => {
         if (step === 6) {
@@ -759,13 +759,10 @@ export const Funnel = () => {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
 
-    const handleNext = (e?: React.MouseEvent) => {
-        if (e) e.preventDefault();
-        console.log("handleNext triggered. Current step:", step, "TOTAL_STEPS:", TOTAL_STEPS);
+    const handleNext = () => {
         if (step < TOTAL_STEPS) {
             setStep(prev => prev + 1);
         } else {
-            console.log("Calling submitData from handleNext");
             submitData();
         }
     };
@@ -811,11 +808,18 @@ export const Funnel = () => {
 
 
     const submitData = async () => {
-        console.log("submitData execution started");
         setIsSubmitting(true);
         try {
-            await syncLeadData(formData);
-            console.log("syncLeadData finished");
+            const payload = { body: formData };
+            await fetch(WEBHOOK_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+
             trackEvent('Lead_Complete');
             setIsSuccess(true);
         } catch (error) {
@@ -962,7 +966,7 @@ export const Funnel = () => {
                     </div>
                     <div className="flex gap-6 text-[10px] uppercase tracking-widest font-medium">
                         <a
-                            href="https://s-e-d-solar.de/impressum-datenschutz/"
+                            href="https://solar-sed.de/impressum-datenschutz/"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="hover:text-gray-600 transition-colors"
@@ -970,7 +974,7 @@ export const Funnel = () => {
                             Impressum
                         </a>
                         <a
-                            href="https://s-e-d-solar.de/impressum-datenschutz/"
+                            href="https://solar-sed.de/impressum-datenschutz/"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="hover:text-gray-600 transition-colors"
