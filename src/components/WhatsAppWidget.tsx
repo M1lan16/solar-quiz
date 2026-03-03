@@ -3,7 +3,7 @@ import React from 'react';
 export const WhatsAppWidget: React.FC = () => {
     return (
         <a
-            href="https://wa.me/4915776932074?text=Hallo%20SED%20Solar%20Team%2C%20ich%20habe%20eine%20Frage%20zu%20einer%20Photovoltaik-Anlage."
+            href="https://wa.me/4915776932074?text=Hallo%20SED%20Solar%2C%20ich%20interessiere%20mich%20f%C3%BCr%20Photovoltaik."
             target="_blank"
             rel="noopener noreferrer"
             className="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-[9999] w-[60px] h-[60px] rounded-full flex items-center justify-center shadow-lg transition-transform duration-300 hover:scale-110 active:scale-95"
