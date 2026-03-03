@@ -119,10 +119,7 @@ const getValidationError = (field: keyof FunnelState, value: string): string | n
         case 'phone':
             const digitsOnly = value.replace(/\D/g, ''); // Count only the numbers
 
-            if (!value.startsWith('+49') && !value.startsWith('0')) {
-                return "Die Nummer muss mit 0 oder +49 beginnen.";
-            }
-            if (digitsOnly.length < 7) {
+            if (digitsOnly.length < 10) {
                 return "Die Telefonnummer ist zu kurz.";
             }
 
@@ -981,13 +978,10 @@ export const Funnel = () => {
                 const phoneOnlyDigits = formData.phone.replace(/\D/g, ''); // Only numbers without +
                 const isRepeatedChars = /^(.)\1+$/.test(phoneOnlyDigits); // E.g. "33333333"
 
-                // Needs to start with +49 or 0, have realistic length (between 7 and 15 digits), and not be spam
-                let isValidFormat = (formData.phone.startsWith('+49') || formData.phone.startsWith('0'));
-
                 // If it's pure logic, let's validate against the raw digit length
-                let isValidLength = phoneOnlyDigits.length >= 7 && phoneOnlyDigits.length <= 15;
+                let isValidLength = phoneOnlyDigits.length >= 10 && phoneOnlyDigits.length <= 15;
 
-                return isValidFormat && isValidLength && !isRepeatedChars;
+                return isValidLength && !isRepeatedChars;
             default: return true;
         }
     };
