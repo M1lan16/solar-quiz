@@ -1,5 +1,6 @@
 import { Funnel } from './components/Funnel'
 import { Analytics } from './components/Analytics'
+import { WhatsAppWidget } from './components/WhatsAppWidget'
 
 function App() {
     return (
@@ -9,6 +10,7 @@ function App() {
             <main className="flex-grow w-full">
                 <Funnel />
             </main>
+            <WhatsAppWidget />
         </div>
     )
 }
